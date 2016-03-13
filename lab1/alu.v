@@ -43,19 +43,21 @@ output [32-1:0] result;
 output          zero;
 output          cout;
 output          overflow;
- 
+
+wire Z;
+wire Over;
 reg    [32-1:0] result;
 reg             zero;
 reg             cout;
 reg             overflow;
 
-nor ZERO(zero, result[0], result[1], result[2], result[3], result[4], result[5], result[6],
+nor ZERO(Z, result[0], result[1], result[2], result[3], result[4], result[5], result[6],
 				 result[7], result[8], result[9], result[10], result[11], result[12], result[13],
 				  result[14], result[15], result[16], result[17], result[18], result[19], result[20],
 				   result[21], result[22], result[23], result[24], result[25], result[26], result[27],
 					 result[28], result[29], result[30], result[31]);
 
-xor OVERFLOW(overflow, ALU_30.cout, ALU_31.cout);
+xor OVERFLOW(Over, ALU_30.cout, ALU_31.cout);
 
 
 alu_top ALU_31(.src1(src1[31]), .src2(src2[31]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_30.cout), .operation(ALU_control[1:0]), .result(result[31]), .cout(cout));
@@ -89,7 +91,7 @@ alu_top ALU_4(.src1(src1[4]), .src2(src2[4]), .less(ALU_control[3]), .A_invert(A
 alu_top ALU_3(.src1(src1[3]), .src2(src2[3]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_2.cout), .operation(ALU_control[1:0]), .result(result[3]), .cout(ALU_4.cin));
 alu_top ALU_2(.src1(src1[2]), .src2(src2[2]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_1.cout), .operation(ALU_control[1:0]), .result(result[2]), .cout(ALU_3.cin));
 alu_top ALU_1(.src1(src1[1]), .src2(src2[1]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_0.cout), .operation(ALU_control[1:0]), .result(result[1]), .cout(ALU_2.cin));
-alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(result[31]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(result[0]), .cout(ALU_1.cin));
+alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(result[0]), .cout(ALU_1.cin));
 
 
 
@@ -102,6 +104,8 @@ begin
 		cout <= 0;
 		overflow <= 0;
 	end
+	zero = Z;
+	Over = overflow;
 end
 
 endmodule
