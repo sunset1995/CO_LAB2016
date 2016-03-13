@@ -46,19 +46,19 @@ output          overflow;
 
 wire Z;
 wire Over;
+wire [32-1:0] tmpresult;
 reg    [32-1:0] result;
 reg             zero;
 reg             cout;
 reg             overflow;
 
-nor ZERO(Z, result[0], result[1], result[2], result[3], result[4], result[5], result[6],
-				 result[7], result[8], result[9], result[10], result[11], result[12], result[13],
-				  result[14], result[15], result[16], result[17], result[18], result[19], result[20],
-				   result[21], result[22], result[23], result[24], result[25], result[26], result[27],
-					 result[28], result[29], result[30], result[31]);
-
 xor OVERFLOW(Over, ALU_30.cout, ALU_31.cout);
 
+nor ZERO(Z, tmpresult[0], tmpresult[1], tmpresult[2], tmpresult[3], tmpresult[4], tmpresult[5], tmpresult[6],
+				 tmpresult[7], tmpresult[8], tmpresult[9], tmpresult[10], tmpresult[11], tmpresult[12], tmpresult[13],
+				  tmpresult[14], tmpresult[15], tmpresult[16], tmpresult[17], tmpresult[18], tmpresult[19], tmpresult[20],
+				   tmpresult[21], tmpresult[22], tmpresult[23], tmpresult[24], tmpresult[25], tmpresult[26], tmpresult[27],
+					 tmpresult[28], tmpresult[29], tmpresult[30], tmpresult[31]);
 
 alu_top ALU_31(.src1(src1[31]), .src2(src2[31]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_30.cout), .operation(ALU_control[1:0]), .result(result[31]), .cout(cout));
 alu_top ALU_30(.src1(src1[30]), .src2(src2[30]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_29.cout), .operation(ALU_control[1:0]), .result(result[30]), .cout(ALU_31.cin));
@@ -94,18 +94,22 @@ alu_top ALU_1(.src1(src1[1]), .src2(src2[1]), .less(ALU_control[3]), .A_invert(A
 alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(ALU_control[3]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(result[0]), .cout(ALU_1.cin));
 
 
-
 always@(*)
 begin
-	if( rst_n == 1);
-	begin
-		result <= 0;
-		zero <= 0;
-		cout <= 0;
-		overflow <= 0;
-	end
-	zero = Z;
-	Over = overflow;
+	if( rst_n == 1)
+		begin
+			result <= 0;
+			zero <= 0;
+			cout <= 0;
+			overflow <= 0;
+		end
+	else
+		begin
+			result[32-1:0] <= tmpresult[32-1:0];
+			zero <= Z;
+			cout <= ALU_31.cout;
+			overflow <= Over;
+		end
 end
 
 endmodule
