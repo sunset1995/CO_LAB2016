@@ -1,7 +1,7 @@
-*
+*/*
 !.gitignore
-!*.v
-!*.vhd
-!*.pdf
-!*.doc
+!*/*.v
+!*/*.vhd
+!*/*.pdf
+!*/*.doc
 
