@@ -1,0 +1,50 @@
+Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -lib secureip -o C:/Users/oiu/Desktop/computer-organization/lab1/testbench_isim_beh.exe -prj C:/Users/oiu/Desktop/computer-organization/lab1/testbench_beh.prj work.testbench work.glbl 
+ISim P.20131013 (signature 0x7708f090)
+Number of CPUs detected in this system: 4
+Turning on mult-threading, number of parallel sub-compilation jobs: 8 
+Determining compilation order of HDL files
+Analyzing Verilog file "C:/Users/oiu/Desktop/computer-organization/lab1/alu_top.v" into library work
+Analyzing Verilog file "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" into library work
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 52: Target <zero> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 58: Target <overflow> of concurrent assignment or output port connection should be a net type.
+Analyzing Verilog file "C:/Users/oiu/Desktop/computer-organization/lab1/testbench.v" into library work
+Analyzing Verilog file "C:/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
+Starting static elaboration
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 52: Target <zero> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 58: Target <overflow> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 61: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 62: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 63: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 64: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 65: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 66: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 67: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 68: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 69: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 70: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 71: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 72: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 73: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 74: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 75: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 76: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 77: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 78: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 79: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 80: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 81: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 82: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 83: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 84: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 85: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 86: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 87: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 88: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 89: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 90: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 91: Target <result> of concurrent assignment or output port connection should be a net type.
+WARNING:HDLCompiler:329 - "C:/Users/oiu/Desktop/computer-organization/lab1/alu.v" Line 92: Target <result> of concurrent assignment or output port connection should be a net type.
+Completed static elaboration
+Compiling module alu_top
+Compiling module alu
+ERROR:Simulator:754 - Signal EXCEPTION_ACCESS_VIOLATION received
