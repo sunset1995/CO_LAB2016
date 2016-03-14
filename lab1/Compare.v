@@ -36,20 +36,16 @@ output reg out;
 
 always @(*) begin
 	if ( (less & equal) == 1'b1 )
-		out = 1'b0;
-	else begin	
-		if( comp == 0)
-			out = less;
-		else if( comp == 1)
-			out = !less & !equal;
-		else if( comp == 2)
-			out = less | equal;
-		else if ( comp == 3)
-			out = !less;
-		else if ( comp == 6)
-			out = equal;
-		else
-			out = !equal;
+		out <= 1'b0;
+	else begin
+		case(comp[2:0])
+			0: out <= less;
+			1: out <= !less & !equal;
+			2: out <= less | equal;
+			3: out <= !less;
+			6: out <= equal;
+			default: out <= !equal;
+		endcase
 	end
 end
 

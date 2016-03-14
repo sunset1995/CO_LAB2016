@@ -58,14 +58,12 @@ always @(*) begin
 	cout <= tmpcout;
 	set <= ADD;
 
-	if( operation == 0)
-		result <= AND;
-	else if( operation == 1)
-		result <= OR;
-	else if( operation == 2)
-		result <= ADD;
-	else
-		result <= less;
+	case(operation[2-1:0])
+		0: result <= AND;
+		1: result <= OR;
+		2: result <= ADD;
+		default: result <= less;
+	endcase
 end
 
 endmodule
