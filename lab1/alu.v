@@ -22,58 +22,38 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module alu(
-			rst_n,         // negative reset            (input)
-			src1,          // 32 bits source 1          (input)
-			src2,          // 32 bits source 2          (input)
-			ALU_control,   // 4 bits ALU control input  (input)
-			bonus_control, // 3 bits bonus control input(input) 
-			result,        // 32 bits result            (output)
-			zero,          // 1 bit when the output is 0, zero must be set (output)
-			cout,          // 1 bit carry out           (output)
-			overflow       // 1 bit overflow            (output)
-			);
+	rst_n,         // negative reset            (input)
+	src1,          // 32 bits source 1          (input)
+	src2,          // 32 bits source 2          (input)
+	ALU_control,   // 4 bits ALU control input  (input)
+	bonus_control, // 3 bits bonus control input(input) 
+	result,        // 32 bits result            (output)
+	zero,          // 1 bit when the output is 0, zero must be set (output)
+	cout,          // 1 bit carry out           (output)
+	overflow       // 1 bit overflow            (output)
+	);
 
+input rst_n;
+input [32-1:0] src1;
+input [32-1:0] src2;
+input [4-1:0] ALU_control;
+input [3-1:0] bonus_control; 
 
-input           rst_n;
-input  [32-1:0] src1;
-input  [32-1:0] src2;
-input   [4-1:0] ALU_control;
-input   [3-1:0] bonus_control; 
+output reg [32-1:0] result;
+output reg zero;
+output reg cout;
+output reg overflow;
 
-output [32-1:0] result;
-output          zero;
-output          cout;
-output          overflow;
-
+wire [32-1:0] carry;
+wire [32-1:0] tmpresult;
 wire Z;
 wire Over;
-wire [32-1:0] tmpresult;
 wire set;
-wire notequal;
 wire equal;
-wire [31:0] tmpequal;
-reg    [32-1:0] result;
-reg             zero;
-reg             cout;
-reg             overflow;
 
-wire carry[31:0];
-
-assign Over = carry[30] ^ carry[31];
-
-nor nor1(Z, tmpresult[0], tmpresult[1], tmpresult[2], tmpresult[3], tmpresult[4], tmpresult[5], tmpresult[6],
-				 tmpresult[7], tmpresult[8], tmpresult[9], tmpresult[10], tmpresult[11], tmpresult[12], tmpresult[13],
-				  tmpresult[14], tmpresult[15], tmpresult[16], tmpresult[17], tmpresult[18], tmpresult[19], tmpresult[20],
-				   tmpresult[21], tmpresult[22], tmpresult[23], tmpresult[24], tmpresult[25], tmpresult[26], tmpresult[27],
-					 tmpresult[28], tmpresult[29], tmpresult[30], tmpresult[31]);
-
-assign tmpequal[31:0] = src1[31:0] ^ src2[31:0];
-or or1(notequal, tmpequal[0], tmpequal[1], tmpequal[2], tmpequal[3], tmpequal[4], tmpequal[5], tmpequal[6],
-				 tmpequal[7], tmpequal[8], tmpequal[9], tmpequal[10], tmpequal[11], tmpequal[12], tmpequal[13],
-				  tmpequal[14], tmpequal[15], tmpequal[16], tmpequal[17], tmpequal[18], tmpequal[19], tmpequal[20],
-				   tmpequal[21], tmpequal[22], tmpequal[23], tmpequal[24], tmpequal[25], tmpequal[26], tmpequal[27],
-					 tmpequal[28], tmpequal[29], tmpequal[30], tmpequal[31]);
-assign equal = !notequal;
+assign Z				= ~|tmpresult;
+assign Over				= carry[30] ^ carry[31];
+assign equal			= ~|(src1[31:0] ^ src2[31:0]);
 
 alu_top_less ALU_31(.src1(src1[31]), .src2(src2[31]), .less(1'b0), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[30]), .operation(ALU_control[1:0]), .result(tmpresult[31]), .cout(carry[31]), .set(set));
 alu_top ALU_30(.src1(src1[30]), .src2(src2[30]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[29]), .operation(ALU_control[1:0]), .result(tmpresult[30]), .cout(carry[30]));
@@ -109,22 +89,19 @@ alu_top ALU_1(.src1(src1[1]), .src2(src2[1]), .less(1'b1), .equal(1'b1), .comp(b
 alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(set), .equal(equal), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(tmpresult[0]), .cout(carry[0]));
 
 
-always@(*)
-begin
-	if( rst_n == 0 )
-		begin
-			result <= 0;
-			zero <= 0;
-			cout <= 0;
-			overflow <= 0;
-		end
-	else
-		begin
-			result[32-1:0] <= tmpresult[32-1:0];
-			zero <= Z;
-			cout <= carry[31];
-			overflow <= Over;
-		end
+always @(*) begin
+	if( rst_n == 0 ) begin
+		result <= 0;
+		zero <= 0;
+		cout <= 0;
+		overflow <= 0;
+	end
+	else begin
+		result[32-1:0] <= tmpresult[32-1:0];
+		zero <= Z;
+		cout <= carry[31];
+		overflow <= Over;
+	end
 end
 
 endmodule
