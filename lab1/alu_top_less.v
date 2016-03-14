@@ -20,7 +20,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-module alu_top(
+module alu_top_less(
                src1,       //1 bit source 1 (input)
                src2,       //1 bit source 2 (input)
                less,       //1 bit less     (input)
@@ -29,7 +29,8 @@ module alu_top(
                cin,        //1 bit carry in (input)
                operation,  //operation      (input)
                result,     //1 bit result   (output)
-               cout       //1 bit carry out(output)
+               cout,       //1 bit carry out(output)
+               set //set output
                );
 
 input         src1;
@@ -42,13 +43,14 @@ input [2-1:0] operation;
 
 output        result;
 output        cout;
-
+output 		  set;
 wire AND;
 wire OR;
 wire ADD;
 
 reg           result;
 reg cout;
+reg set;
 wire A_in = src1^A_invert;
 wire B_in = src2^B_invert;
 wire couttmp;
@@ -81,6 +83,7 @@ else if( operation == 2)
 else
 	begin
 		result <= less;
+		set <= ADD;
 		cout <= couttmp;
 	end
 
