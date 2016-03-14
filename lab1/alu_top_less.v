@@ -56,6 +56,7 @@ wire tmpcout = (A_in & B_in) | (A_in & cin) | (B_in & cin);
 
 always @(*) begin
 	cout <= tmpcout;
+	set <= ADD;
 
 	if( operation == 0)
 		result <= AND;
@@ -63,10 +64,8 @@ always @(*) begin
 		result <= OR;
 	else if( operation == 2)
 		result <= ADD;
-	else begin
+	else
 		result <= less;
-		set <= ADD;
-	end
 end
 
 endmodule
