@@ -56,36 +56,24 @@ assign Over				= carry[30] ^ carry[31];
 assign equal			= ~|(src1[31:0] ^ src2[31:0]);
 
 alu_top_less ALU_31(.src1(src1[31]), .src2(src2[31]), .less(1'b0), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[30]), .operation(ALU_control[1:0]), .result(tmpresult[31]), .cout(carry[31]), .set(set));
-alu_top ALU_30(.src1(src1[30]), .src2(src2[30]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[29]), .operation(ALU_control[1:0]), .result(tmpresult[30]), .cout(carry[30]));
-alu_top ALU_29(.src1(src1[29]), .src2(src2[29]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[28]), .operation(ALU_control[1:0]), .result(tmpresult[29]), .cout(carry[29]));
-alu_top ALU_28(.src1(src1[28]), .src2(src2[28]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[27]), .operation(ALU_control[1:0]), .result(tmpresult[28]), .cout(carry[28]));
-alu_top ALU_27(.src1(src1[27]), .src2(src2[27]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[26]), .operation(ALU_control[1:0]), .result(tmpresult[27]), .cout(carry[27]));
-alu_top ALU_26(.src1(src1[26]), .src2(src2[26]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[25]), .operation(ALU_control[1:0]), .result(tmpresult[26]), .cout(carry[26]));
-alu_top ALU_25(.src1(src1[25]), .src2(src2[25]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[24]), .operation(ALU_control[1:0]), .result(tmpresult[25]), .cout(carry[25]));
-alu_top ALU_24(.src1(src1[24]), .src2(src2[24]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[23]), .operation(ALU_control[1:0]), .result(tmpresult[24]), .cout(carry[24]));
-alu_top ALU_23(.src1(src1[23]), .src2(src2[23]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[22]), .operation(ALU_control[1:0]), .result(tmpresult[23]), .cout(carry[23]));
-alu_top ALU_22(.src1(src1[22]), .src2(src2[22]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[21]), .operation(ALU_control[1:0]), .result(tmpresult[22]), .cout(carry[22]));
-alu_top ALU_21(.src1(src1[21]), .src2(src2[21]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[20]), .operation(ALU_control[1:0]), .result(tmpresult[21]), .cout(carry[21]));
-alu_top ALU_20(.src1(src1[20]), .src2(src2[20]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[19]), .operation(ALU_control[1:0]), .result(tmpresult[20]), .cout(carry[20]));
-alu_top ALU_19(.src1(src1[19]), .src2(src2[19]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[18]), .operation(ALU_control[1:0]), .result(tmpresult[19]), .cout(carry[19]));
-alu_top ALU_18(.src1(src1[18]), .src2(src2[18]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[17]), .operation(ALU_control[1:0]), .result(tmpresult[18]), .cout(carry[18]));
-alu_top ALU_17(.src1(src1[17]), .src2(src2[17]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[16]), .operation(ALU_control[1:0]), .result(tmpresult[17]), .cout(carry[17]));
-alu_top ALU_16(.src1(src1[16]), .src2(src2[16]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[15]), .operation(ALU_control[1:0]), .result(tmpresult[16]), .cout(carry[16]));
-alu_top ALU_15(.src1(src1[15]), .src2(src2[15]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[14]), .operation(ALU_control[1:0]), .result(tmpresult[15]), .cout(carry[15]));
-alu_top ALU_14(.src1(src1[14]), .src2(src2[14]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[13]), .operation(ALU_control[1:0]), .result(tmpresult[14]), .cout(carry[14]));
-alu_top ALU_13(.src1(src1[13]), .src2(src2[13]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[12]), .operation(ALU_control[1:0]), .result(tmpresult[13]), .cout(carry[13]));
-alu_top ALU_12(.src1(src1[12]), .src2(src2[12]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[11]), .operation(ALU_control[1:0]), .result(tmpresult[12]), .cout(carry[12]));
-alu_top ALU_11(.src1(src1[11]), .src2(src2[11]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[10]), .operation(ALU_control[1:0]), .result(tmpresult[11]), .cout(carry[11]));
-alu_top ALU_10(.src1(src1[10]), .src2(src2[10]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[9]), .operation(ALU_control[1:0]), .result(tmpresult[10]), .cout(carry[10]));
-alu_top ALU_9(.src1(src1[9]), .src2(src2[9]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[8]), .operation(ALU_control[1:0]), .result(tmpresult[9]), .cout(carry[9]));
-alu_top ALU_8(.src1(src1[8]), .src2(src2[8]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[7]), .operation(ALU_control[1:0]), .result(tmpresult[8]), .cout(carry[8]));
-alu_top ALU_7(.src1(src1[7]), .src2(src2[7]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[6]), .operation(ALU_control[1:0]), .result(tmpresult[7]), .cout(carry[7]));
-alu_top ALU_6(.src1(src1[6]), .src2(src2[6]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[5]), .operation(ALU_control[1:0]), .result(tmpresult[6]), .cout(carry[6]));
-alu_top ALU_5(.src1(src1[5]), .src2(src2[5]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[4]), .operation(ALU_control[1:0]), .result(tmpresult[5]), .cout(carry[5]));
-alu_top ALU_4(.src1(src1[4]), .src2(src2[4]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[3]), .operation(ALU_control[1:0]), .result(tmpresult[4]), .cout(carry[4]));
-alu_top ALU_3(.src1(src1[3]), .src2(src2[3]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[2]), .operation(ALU_control[1:0]), .result(tmpresult[3]), .cout(carry[3]));
-alu_top ALU_2(.src1(src1[2]), .src2(src2[2]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[1]), .operation(ALU_control[1:0]), .result(tmpresult[2]), .cout(carry[2]));
-alu_top ALU_1(.src1(src1[1]), .src2(src2[1]), .less(1'b1), .equal(1'b1), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[0]), .operation(ALU_control[1:0]), .result(tmpresult[1]), .cout(carry[1]));
+generate
+	genvar i;
+	for (i=1; i<31; i=i+1) begin:ALU_
+		alu_top ALU_tachi(
+			.src1(src1[i]),
+			.src2(src2[i]),
+			.less(1'b1),
+			.equal(1'b1),
+			.comp(bonus_control[2:0]),
+			.A_invert(ALU_control[3]),
+			.B_invert(ALU_control[2]),
+			.cin(carry[i-1]),
+			.operation(ALU_control[1:0]),
+			.result(tmpresult[i]),
+			.cout(carry[i])
+		);
+	end
+endgenerate
 alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(set), .equal(equal), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(tmpresult[0]), .cout(carry[0]));
 
 
