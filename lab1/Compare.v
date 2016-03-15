@@ -39,11 +39,11 @@ always @(*) begin
 		out <= 1'b0;
 	else begin
 		case(comp[2:0])
-			0: out <= less;
-			1: out <= !less & !equal;
-			2: out <= less | equal;
-			3: out <= !less;
-			6: out <= equal;
+			0:       out <= less;
+			1:       out <= !less & !equal;
+			2:       out <= less | equal;
+			3:       out <= !less;
+			6:       out <= equal;
 			default: out <= !equal;
 		endcase
 	end

@@ -54,9 +54,9 @@ output reg eout;
 
 wire A_in = src1 ^ A_invert;
 wire B_in = src2 ^ B_invert;
-wire AND = A_in & B_in;
-wire OR = A_in | B_in;
-wire ADD = A_in ^ B_in ^ cin;
+wire AND  = A_in & B_in;
+wire OR   = A_in | B_in;
+wire ADD  = A_in ^ B_in ^ cin;
 wire COMP;
 wire tmpcout = (A_in & B_in) | (A_in & cin) | (B_in & cin);
 wire tmpeout = (src1 ~^ src2) & ein;
@@ -74,9 +74,9 @@ always @(*) begin
 	eout <= tmpeout;
 	
 	case(operation[2-1:0])
-		0: result <= AND;
-		1: result <= OR;
-		2: result <= ADD;
+		0:       result <= AND;
+		1:       result <= OR;
+		2:       result <= ADD;
 		default: result <= COMP;
 	endcase
 end

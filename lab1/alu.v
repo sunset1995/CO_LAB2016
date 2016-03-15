@@ -36,8 +36,8 @@ module alu(
 input rst_n;
 input [32-1:0] src1;
 input [32-1:0] src2;
-input [4-1:0] ALU_control;
-input [3-1:0] bonus_control; 
+input [ 4-1:0] ALU_control;
+input [ 3-1:0] bonus_control; 
 
 output reg [32-1:0] result;
 output reg zero;
@@ -51,8 +51,8 @@ wire Z;
 wire Over;
 wire set;
 
-assign Z				= ~|tmpresult;
-assign Over				= carry[30] ^ carry[31];
+assign Z    = ~|tmpresult;
+assign Over = carry[30] ^ carry[31];
 
 alu_top_less ALU_31(.src1(src1[31]), .src2(src2[31]), .less(1'b0), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[30]), .ein(tmpeout[30]), .operation(ALU_control[1:0]), .result(tmpresult[31]), .cout(carry[31]), .eout(tmpeout[31]), .set(set));
 generate
@@ -80,15 +80,15 @@ alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(set), .equal(tmpeout[31]), .
 
 always @(*) begin
 	if( rst_n == 0 ) begin
-		result <= 0;
-		zero <= 0;
-		cout <= 0;
+		result   <= 0;
+		zero     <= 0;
+		cout     <= 0;
 		overflow <= 0;
 	end
 	else begin
-		result[32-1:0] <= tmpresult[32-1:0];
-		zero <= Z;
-		cout <= carry[31];
+		result   <= tmpresult;
+		zero     <= Z;
+		cout     <= carry[31];
 		overflow <= Over;
 	end
 end
