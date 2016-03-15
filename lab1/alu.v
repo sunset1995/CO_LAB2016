@@ -46,16 +46,15 @@ output reg overflow;
 
 wire [32-1:0] carry;
 wire [32-1:0] tmpresult;
+wire [32-1:0] tmpeout;
 wire Z;
 wire Over;
 wire set;
-wire equal;
 
 assign Z				= ~|tmpresult;
 assign Over				= carry[30] ^ carry[31];
-assign equal			= ~|(src1[31:0] ^ src2[31:0]);
 
-alu_top_less ALU_31(.src1(src1[31]), .src2(src2[31]), .less(1'b0), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[30]), .operation(ALU_control[1:0]), .result(tmpresult[31]), .cout(carry[31]), .set(set));
+alu_top_less ALU_31(.src1(src1[31]), .src2(src2[31]), .less(1'b0), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(carry[30]), .ein(tmpeout[30]), .operation(ALU_control[1:0]), .result(tmpresult[31]), .cout(carry[31]), .eout(tmpeout[31]), .set(set));
 generate
 	genvar i;
 	for (i=1; i<31; i=i+1) begin:ALU_
@@ -68,13 +67,15 @@ generate
 			.A_invert(ALU_control[3]),
 			.B_invert(ALU_control[2]),
 			.cin(carry[i-1]),
+			.ein(tmpeout[i-1]),
 			.operation(ALU_control[1:0]),
 			.result(tmpresult[i]),
-			.cout(carry[i])
+			.cout(carry[i]),
+			.eout(tmpeout[i])
 		);
 	end
 endgenerate
-alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(set), .equal(equal), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .operation(ALU_control[1:0]), .result(tmpresult[0]), .cout(carry[0]));
+alu_top ALU_0(.src1(src1[0]), .src2(src2[0]), .less(set), .equal(tmpeout[31]), .comp(bonus_control[2:0]), .A_invert(ALU_control[3]), .B_invert(ALU_control[2]), .cin(ALU_control[2]), .ein(1'b1), .operation(ALU_control[1:0]), .result(tmpresult[0]), .cout(carry[0]), .eout(tmpeout[0]));
 
 
 always @(*) begin
