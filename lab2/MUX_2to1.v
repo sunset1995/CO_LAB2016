@@ -16,7 +16,7 @@ module MUX_2to1(
                data_o
                );
 
-parameter size = 5;			   
+parameter size = 0;			   
 			
 //I/O ports               
 input   [size-1:0] data0_i;          
@@ -32,7 +32,7 @@ always @(*) begin
 	if (select_i==0) begin	
 		data_o = data0_i;
 	end
-	else
+	else begin
 		data_o = data1_i;
 	end
 end
