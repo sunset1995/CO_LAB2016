@@ -38,7 +38,7 @@ reg            Branch_o;
 always @(*) begin
 	case(instr_op_i) 
 		4: begin
-			RegWrite_o <= 1;
+			RegWrite_o <= 0;
 			ALU_op_o   <= 5;
 			ALUSrc_o   <= 0;
 			Branch_o   <= 1;
