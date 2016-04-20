@@ -36,7 +36,7 @@ reg            Branch_o;
 
 //Main function
 always @(*) begin
-	case(instr_op_i) begin
+	case(instr_op_i) 
 		4: begin
 			RegWrite_o <= 1;
 			ALU_op_o   <= 5;
@@ -63,7 +63,7 @@ always @(*) begin
 			RegDst_o   <= 1;
 			Branch_o   <= 0;
 		end
-	end
+	endcase
 end
 
 endmodule
