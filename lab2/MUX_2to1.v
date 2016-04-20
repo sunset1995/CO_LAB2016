@@ -30,10 +30,10 @@ reg     [size-1:0] data_o;
 //Main function
 always @(*) begin
 	if (select_i==0) begin	
-		data_o = data0_i;
+		data_o <= data0_i;
 	end
 	else begin
-		data_o = data1_i;
+		data_o <= data1_i;
 	end
 end
 
