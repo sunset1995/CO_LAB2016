@@ -23,9 +23,10 @@ output [32-1:0]	 sum_o;
 //Internal Signals
 wire    [32-1:0]	 sum_o;
 
-//Parameter
-    
 //Main function
+always @(*) begin
+	sum_o = src1_i + src2_i;
+end
 
 endmodule
 
