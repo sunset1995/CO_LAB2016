@@ -26,10 +26,10 @@ always @(*) begin
 	data_o[15:0] <= data_i[15:0];
 	
 	if (data_i[15]==0) begin
-		data_o[31:16] <= ~(16'b0);
+		data_o[31:16] <= 16'b0;
 	end
 	else begin
-		data_o[31:16] <= 16'b0;
+		data_o[31:16] <= ~(16'b0);
 	end
 end
           
