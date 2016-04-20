@@ -21,11 +21,11 @@ input  [32-1:0]	 src2_i;
 output [32-1:0]	 sum_o;
 
 //Internal Signals
-wire    [32-1:0]	 sum_o;
+reg    [32-1:0]	 sum_o;
 
 //Main function
 always @(*) begin
-	sum_o = src1_i + src2_i;
+	sum_o[31:0] = src1_i[31:0] + src2_i[31:0];
 end
 
 endmodule
