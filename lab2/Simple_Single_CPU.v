@@ -85,8 +85,8 @@ Instr_Memory IM(
 	    );
 
 MUX_2to1 #(.size(5)) Mux_Write_Reg(
-        .data0_i(instr_o[25:21]),
-        .data1_i(instr_o[20:16]),
+        .data0_i(instr_o[20:16]),
+        .data1_i(instr_o[15:11]),
         .select_i(RegDst_o),
         .data_o(data_o_right_reg)
         );	
@@ -154,7 +154,7 @@ MUX_2to1 #(.size(32)) Mux_PC_Source(
         .data1_i(sum_o_adder2),
         .select_i(and_out),
         .data_o(pc_in_i)
-        );	
+        );
 
 endmodule
 		  
