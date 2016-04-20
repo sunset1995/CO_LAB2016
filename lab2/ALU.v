@@ -29,6 +29,8 @@ output           zero_o;
 reg    [32-1:0]  result_o;
 wire             zero_o;
 
+assign zero_o = (result_o==0);
+
 //Main function
 always @(*) begin
 	case(ctrl_i[3:0])
@@ -44,7 +46,7 @@ always @(*) begin
 				 		result_o <= 0;
 				 	end
 				 end
-	endcase	
+	endcase
 end
 
 endmodule
