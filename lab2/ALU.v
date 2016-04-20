@@ -38,7 +38,7 @@ always @(*) begin
 		4'b0001: result_o <= src1_i | src2_i;
 		4'b0010: result_o <= src1_i + src2_i;
 		4'b0110: result_o <= src1_i - src2_i;
-		4'b0111: begin 
+		default: begin 
 				 	if( src1_i<src2_i ) begin
 				 		result_o <= 1;
 				 	end
