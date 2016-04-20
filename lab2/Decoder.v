@@ -34,10 +34,37 @@ reg            RegWrite_o;
 reg            RegDst_o;
 reg            Branch_o;
 
-//Parameter
-
-
 //Main function
+always @(*) begin
+	case(instr_op_i) begin
+		4: begin
+			RegWrite_o <= 1;
+			ALU_op_o   <= 5;
+			ALUSrc_o   <= 0;
+			Branch_o   <= 1;
+		end
+		8: begin
+			RegWrite_o <= 1;
+			ALU_op_o   <= 2;
+			ALUSrc_o   <= 1;
+			RegDst_o   <= 0;
+			Branch_o   <= 0;
+		end
+		9: begin
+			RegWrite_o <= 1;
+			ALU_op_o   <= 7;
+			ALUSrc_o   <= 1;
+			RegDst_o   <= 0;
+			Branch_o   <= 0;
+		end
+		default: begin
+			RegWrite_o <= 1;
+			ALUSrc_o   <= 0;
+			RegDst_o   <= 1;
+			Branch_o   <= 0;
+		end
+	end
+end
 
 endmodule
 
