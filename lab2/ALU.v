@@ -29,9 +29,23 @@ output           zero_o;
 reg    [32-1:0]  result_o;
 wire             zero_o;
 
-//Parameter
-
 //Main function
+always @(*) begin
+	case(ctrl_i[3:0])
+		4'b0000: result_o <= src1_i & src2_i;
+		4'b0001: result_o <= src1_i | src2_i;
+		4'b0010: result_o <= src1_i + src2_i;
+		4'b0110: result_o <= src1_i - src2_i;
+		4'b0111: begin 
+				 	if( src1_i<src2_i ) begin
+				 		result_o <= 1;
+				 	end
+				 	else begin
+				 		result_o <= 0;
+				 	end
+				 end
+	endcase	
+end
 
 endmodule
 
