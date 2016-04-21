@@ -130,8 +130,17 @@ MUX_2to1 #(.size(32)) Mux_ALUSrc(
         .data_o(Src_data_o)
         );	
 		
+// decide alu src_1 from RF or from shamt
+wire [31:0] RFD1_or_shamt;
+MUX_2to1 #(.size(32)) Mux_Shift_op(
+        .data0_i(RSdata_o),
+        .data1_i({27'b0,instr_o[10:6]}),
+        .select_i(instr_o[5:0]==3),
+        .data_o(RFD1_or_shamt)
+        );      
+
 ALU ALU(
-        .src1_i(RSdata_o),
+        .src1_i(RFD1_or_shamt),
 	    .src2_i(Src_data_o),
 	    .ctrl_i(ALUCtrl_o),
 	    .result_o(result_o),

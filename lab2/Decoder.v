@@ -28,49 +28,36 @@ output         RegDst_o;
 output         Branch_o;
  
 //Internal Signals
-reg    [3-1:0] ALU_op_o;
-reg            ALUSrc_o;
-reg            RegWrite_o;
-reg            RegDst_o;
-reg            Branch_o;
+wire           RegWrite_o;
+wire   [3-1:0] ALU_op_o;
+wire           ALUSrc_o;
+wire           RegDst_o;
+wire           Branch_o;
 
-//Main function
-always @(*) begin
-	case(instr_op_i) 
-		4: begin
-			RegWrite_o <= 0;
-			ALU_op_o   <= 5;
-			ALUSrc_o   <= 0;
-			Branch_o   <= 1;
-		end
-		8: begin
-			RegWrite_o <= 1;
-			ALU_op_o   <= 2;
-			ALUSrc_o   <= 1;
-			RegDst_o   <= 0;
-			Branch_o   <= 0;
-		end
-		9: begin
-			RegWrite_o <= 1;
-			ALU_op_o   <= 7;
-			ALUSrc_o   <= 1;
-			RegDst_o   <= 0;
-			Branch_o   <= 0;
-		end
-		default: begin
-			RegWrite_o <= 1;
-			ALUSrc_o   <= 0;
-			RegDst_o   <= 1;
-			Branch_o   <= 0;
-		end
-	endcase
-end
+wire rtype;
+wire beq;
+wire bne;
+wire addi;
+wire sltiu;
+wire ori;
+wire lui;
+
+
+assign rtype = (instr_op_i==0);
+assign beq   = (instr_op_i==4);
+assign bne   = (instr_op_i==5);
+assign addi  = (instr_op_i==8);
+assign sltiu = (instr_op_i==9);
+assign ori   = (instr_op_i==13);
+assign lui   = (instr_op_i==15);
+
+assign RegWrite_o = (rtype | addi | sltiu | ori | lui);
+assign ALUSrc_o   = (addi | sltiu | ori | lui);
+assign RegDst_o   = rtype;
+assign Branch_o   = (beq | bne);
+
+assign ALU_op_o[2] = (beq | sltiu | lui);
+assign ALU_op_o[1] = (beq | bne | addi | sltiu);
+assign ALU_op_o[0] = (bne | sltiu | ori);
 
 endmodule
-
-
-
-
-
-                    
-                    
