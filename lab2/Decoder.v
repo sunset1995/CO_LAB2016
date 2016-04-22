@@ -1,3 +1,4 @@
+// 0317001_0310511
 //Subject:     CO project 2 - Decoder
 //--------------------------------------------------------------------------------
 //Version:     1
@@ -16,7 +17,7 @@ module Decoder(
 	ALUSrc_o,
 	RegDst_o,
 	Branch_o
-	);
+);
      
 //I/O ports
 input  [6-1:0] instr_op_i;

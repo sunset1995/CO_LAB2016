@@ -1,3 +1,4 @@
+// 0317001_0310511
 //Subject:     CO project 2 - PC
 //--------------------------------------------------------------------------------
 //Version:     1
@@ -14,7 +15,7 @@ module ProgramCounter(
 	rst_i,
 	pc_in_i,
 	pc_out_o
-	);
+);
      
 //I/O ports
 input           clk_i;

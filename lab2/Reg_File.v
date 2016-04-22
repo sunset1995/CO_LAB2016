@@ -1,3 +1,4 @@
+// 0317001_0310511
 //Subject:     CO project 2 - Register File
 //--------------------------------------------------------------------------------
 //Version:     1
@@ -18,7 +19,7 @@ module Reg_File(
     RegWrite_i,
     RSdata_o,
     RTdata_o
-    );
+);
           
 //I/O ports
 input           clk_i;
@@ -38,8 +39,8 @@ wire        [32-1:0] RSdata_o;
 wire        [32-1:0] RTdata_o;
 
 //Read the data
-assign RSdata_o = Reg_File[RSaddr_i] ;
-assign RTdata_o = Reg_File[RTaddr_i] ;   
+assign RSdata_o = Reg_File[RSaddr_i];
+assign RTdata_o = Reg_File[RTaddr_i];   
 
 //Writing data when postive edge clk_i and RegWrite_i was set.
 always @( posedge rst_i or posedge clk_i  ) begin
@@ -61,11 +62,4 @@ always @( posedge rst_i or posedge clk_i  ) begin
 	end
 end
 
-endmodule     
-
-
-
-
-
-                    
-                    
+endmodule

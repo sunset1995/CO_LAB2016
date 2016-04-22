@@ -1,3 +1,4 @@
+// 0317001_0310511
 //Subject:     CO project 2 - Instruction Memory
 //--------------------------------------------------------------------------------
 //Version:     1
@@ -12,7 +13,7 @@
 module Instr_Memory(
     pc_addr_i,
 	instr_o
-	);
+);
  
 //I/O ports
 input  [32-1:0]  pc_addr_i;
@@ -40,10 +41,3 @@ initial begin
 		
 end
 endmodule
-
-
-
-
-
-                    
-                    
