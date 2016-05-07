@@ -51,7 +51,11 @@ wire        RegWrite_o;
 wire [2:0]  ALU_op_o; 
 wire        ALUSrc_o;   
 wire        RegDst_o;   
-wire        Branch_o;   
+wire        Branch_o;
+wire        Jump_o;
+wire        MemRead_o;
+wire        MemWrite_o;
+wire        MemtoReg_o;
 
 // wire for ALUCtrl
 wire [3:0]  ALUCtrl_o;
@@ -65,6 +69,12 @@ wire [31:0] data_o_shift;
 
 // wire for adder2
 wire [31:0] sum_o_adder2;
+
+// wire for branch result
+wire [31:0] mux_branch_result;
+
+// wire for jump
+wire [31:0] instr_shl2;
 
 //Greate componentes
 ProgramCounter PC(
@@ -81,7 +91,7 @@ Adder Adder1(
 );
 	
 Instr_Memory IM(
-        .pc_addr_i(pc_out_o),  
+        .addr_i(pc_out_o),  
         .instr_o(instr_o)    
 );
 
@@ -110,7 +120,11 @@ Decoder Decoder(
         .ALU_op_o(ALU_op_o),   
         .ALUSrc_o(ALUSrc_o),   
         .RegDst_o(RegDst_o),   
-        .Branch_o(Branch_o)   
+        .Branch_o(Branch_o),
+        .Jump_o(Jump_o),
+        .MemRead_o(MemRead_o),
+        .MemWrite_o(MemWrite_o),
+        .MemtoReg_o(MemtoReg_o)
 );
 
 ALU_Ctrl AC(
@@ -163,7 +177,21 @@ MUX_2to1 #(.size(32)) Mux_PC_Source(
         .data0_i(sum_o_add1),
         .data1_i(sum_o_adder2),
         .select_i(and_out),
+        .data_o(mux_branch_result)
+);
+
+// Jump
+Shift_Left_Two_32 Shifter_jump(
+        .data_i(instr_o),
+        .data_o(instr_shl2)
+);
+
+MUX_2to1 #(.size(32)) Mux_PC_Jump(
+        .data0_i({sum_o_add1[31:28],instr_shl2[27:0]}),
+        .data1_i(mux_branch_result),
+        .select_i(Jump_o),
         .data_o(pc_in_i)
 );
+
 
 endmodule
