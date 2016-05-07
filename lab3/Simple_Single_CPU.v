@@ -73,6 +73,12 @@ wire [31:0] sum_o_adder2;
 // wire for branch result
 wire [31:0] mux_branch_result;
 
+// wire for new added data memory
+wire [31:0] result_from_mem;
+
+// wire for write back data
+wire [31:0] write_back_data;
+
 // wire for jump
 wire [31:0] instr_shl2;
 
@@ -104,13 +110,13 @@ MUX_2to1 #(.size(5)) Mux_Write_Reg(
 		
 Reg_File RF(
         .clk_i(clk_i),      
-        .rst_i(rst_i) ,     
+        .rst_i(rst_i),     
         .RSaddr_i(instr_o[25:21]) ,  
         .RTaddr_i(instr_o[20:16]) ,  
-        .RDaddr_i(data_o_right_reg) ,  
-        .RDdata_i(result_o)  , 
+        .RDaddr_i(data_o_right_reg),  
+        .RDdata_i(write_back_data), 
         .RegWrite_i (RegWrite_o),
-        .RSdata_o(RSdata_o) ,  
+        .RSdata_o(RSdata_o),  
         .RTdata_o(RTdata_o)   
 );
 	
@@ -180,6 +186,23 @@ MUX_2to1 #(.size(32)) Mux_PC_Source(
         .data_o(mux_branch_result)
 );
 
+// MEM
+Data_Memory Data_Memory(
+        .clk_i(clk_i),
+        .addr_i(result_o),
+        .data_i(RTdata_o),
+        .MemRead_i(MemRead_o),
+        .MemWrite_i(MemWrite_o),
+        .data_o(result_from_mem)
+);
+
+MUX_2to1 #(.size(32)) Mux_Write_Back_Data(
+        .data0_i(result_o),
+        .data1_i(result_from_mem),
+        .select_i(MemtoReg_o),
+        .data_o(write_back_data)
+);
+
 // Jump
 Shift_Left_Two_32 Shifter_jump(
         .data_i(instr_o),
@@ -187,8 +210,8 @@ Shift_Left_Two_32 Shifter_jump(
 );
 
 MUX_2to1 #(.size(32)) Mux_PC_Jump(
-        .data0_i({sum_o_add1[31:28],instr_shl2[27:0]}),
-        .data1_i(mux_branch_result),
+        .data0_i(mux_branch_result),
+        .data1_i({sum_o_add1[31:28],instr_shl2[27:0]}),
         .select_i(Jump_o),
         .data_o(pc_in_i)
 );
