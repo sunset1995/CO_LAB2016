@@ -16,7 +16,11 @@ module Decoder(
 	ALU_op_o,
 	ALUSrc_o,
 	RegDst_o,
-	Branch_o
+	Branch_o,
+	Jump_o,
+	MemRead_o,
+	MemWrite_o,
+	MemtoReg_o,
 );
      
 //I/O ports
@@ -27,6 +31,10 @@ output [3-1:0] ALU_op_o;
 output         ALUSrc_o;
 output         RegDst_o;
 output         Branch_o;
+output         Jump_o;
+output         MemRead_o;
+output         MemWrite_o;
+output         MemtoReg_o;
  
 //Internal Signals
 wire           RegWrite_o;
@@ -34,6 +42,10 @@ wire   [3-1:0] ALU_op_o;
 wire           ALUSrc_o;
 wire           RegDst_o;
 wire           Branch_o;
+wire           Jump_o;
+wire           MemRead_o;
+wire           MemWrite_o;
+wire           MemtoReg_o;
 
 wire rtype;
 wire beq;
@@ -42,6 +54,9 @@ wire addi;
 wire sltiu;
 wire ori;
 wire lui;
+wire jump;    // 000010
+wire lw;      // 100011
+wire sw;      // 101011
 
 
 assign rtype = (instr_op_i==0);
@@ -51,11 +66,16 @@ assign addi  = (instr_op_i==8);
 assign sltiu = (instr_op_i==9);
 assign ori   = (instr_op_i==13);
 assign lui   = (instr_op_i==15);
+assign jump  = (instr_op_i==2);
 
-assign RegWrite_o = (rtype | addi | sltiu | ori | lui);
+assign RegWrite_o = (rtype | addi | sltiu | ori | lui | lw);
 assign ALUSrc_o   = (addi | sltiu | ori | lui);
 assign RegDst_o   = rtype;
 assign Branch_o   = (beq | bne);
+assign Jump_o     = jump;
+assign MemRead_o  = lw;
+assign MemWrite_o = sw;
+assign MemtoReg_o = sw;
 
 assign ALU_op_o[2] = (beq | sltiu | lui);
 assign ALU_op_o[1] = (beq | bne | addi | sltiu);
