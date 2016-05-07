@@ -31,15 +31,19 @@ module TestBench;
     Clk = 0;
     Start = 0;
     
-    #(`CYCLE_TIME)
-    
-    Start = 1;
-    #(`CYCLE_TIME*560)	
-    
-  $finish;
+    #(`CYCLE_TIME) Start = 1;
+    //#(`CYCLE_TIME) $finish;
   end
   
+  integer cnt=0;
   always@(posedge Clk) begin
+    $display("cnt %d", cnt);
+    $display("%d", CPU.PC.pc_out_o/4);
+    $display("IM %b", CPU.IM.instr_o);
+    $display("f(%d)", CPU.RF.Reg_File[16]);
+    $display("----");
+    cnt = cnt + 1;
+    /*
   	$display("PC = %d", CPU.PC.pc_out_o);
     $display("Data Memory = %d, %d, %d, %d, %d, %d, %d, %d",CPU.Data_Memory.memory[0], CPU.Data_Memory.memory[1], CPU.Data_Memory.memory[2], CPU.Data_Memory.memory[3], CPU.Data_Memory.memory[4], CPU.Data_Memory.memory[5], CPU.Data_Memory.memory[6], CPU.Data_Memory.memory[7]);
     $display("Data Memory = %d, %d, %d, %d, %d, %d, %d, %d",CPU.Data_Memory.memory[8], CPU.Data_Memory.memory[9], CPU.Data_Memory.memory[10], CPU.Data_Memory.memory[11], CPU.Data_Memory.memory[12], CPU.Data_Memory.memory[13], CPU.Data_Memory.memory[14], CPU.Data_Memory.memory[15]);
@@ -50,6 +54,7 @@ module TestBench;
     $display("R8 = %d, R9 = %d, R10 =%d, R11 =%d, R12 =%d, R13 =%d, R14 =%d, R15 =%d", CPU.RF.Reg_File[ 8], CPU.RF.Reg_File[ 9], CPU.RF.Reg_File[10], CPU.RF.Reg_File[11], CPU.RF.Reg_File[12], CPU.RF.Reg_File[13], CPU.RF.Reg_File[14], CPU.RF.Reg_File[15]);
     $display("R16 =%d, R17 =%d, R18 =%d, R19 =%d, R20 =%d, R21 =%d, R22 =%d, R23 =%d", CPU.RF.Reg_File[16], CPU.RF.Reg_File[17], CPU.RF.Reg_File[18], CPU.RF.Reg_File[19], CPU.RF.Reg_File[20], CPU.RF.Reg_File[21], CPU.RF.Reg_File[22], CPU.RF.Reg_File[23]);
     $display("R24 =%d, R25 =%d, R26 =%d, R27 =%d, R28 =%d, R29 =%d, R30 =%d, R31 =%d", CPU.RF.Reg_File[24], CPU.RF.Reg_File[25], CPU.RF.Reg_File[26], CPU.RF.Reg_File[27], CPU.RF.Reg_File[28], CPU.RF.Reg_File[29], CPU.RF.Reg_File[30], CPU.RF.Reg_File[31]);
+    */
   end
 
   always #(`CYCLE_TIME/2) Clk = ~Clk;	
