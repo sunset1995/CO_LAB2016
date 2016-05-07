@@ -2,7 +2,7 @@
 !.gitignore
 !*/*.v
 !*/*.vhd
-!*/*.txt
+!*/**/*.txt
 !*/*.pdf
 !*/*.doc
 !*/*.docx
