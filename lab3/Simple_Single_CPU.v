@@ -109,16 +109,16 @@ MUX_2to1 #(.size(5)) Mux_Write_Reg(
         .data_o(data_o_right_reg)
 );	
 
-wire final_write_reg;
-wire final_write_data;
+wire [4:0]  final_write_reg;
+wire [31:0] final_write_data;
 MUX_2to1 #(.size(5)) Jal_Write_Reg(
         // Jal
         .data0_i(data_o_right_reg),
-        .data1_i(31),
+        .data1_i(5'b11111),
         .select_i(Jal_o),
         .data_o(final_write_reg)
 );
-MUX_2to1 #(.size(5)) Jal_Write_Data(
+MUX_2to1 #(.size(32)) Jal_Write_Data(
         // Jal
         .data0_i(write_back_data),
         .data1_i(sum_o_add1),
@@ -228,10 +228,19 @@ Shift_Left_Two_32 Shifter_jump(
         .data_o(instr_shl2)
 );
 
+wire [31:0] jump_pc;
 MUX_2to1 #(.size(32)) Mux_PC_Jump(
         .data0_i(mux_branch_result),
         .data1_i({sum_o_add1[31:28],instr_shl2[27:0]}),
         .select_i(Jump_o),
+        .data_o(jump_pc)
+);
+
+// Jal
+MUX_2to1 #(.size(32)) Mux_PC_Jal(
+        .data0_i(jump_pc),
+        .data1_i(RSdata_o),
+        .select_i({instr_o[31:26],instr_o[5:0]}==8),
         .data_o(pc_in_i)
 );
 
