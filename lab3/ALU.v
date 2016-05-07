@@ -58,7 +58,23 @@ always @(*) begin
 				 		result_o <= 0;
 				 	end
 				 end
-		default: // SRA, SRAV
+		4'b1111: begin // set greater than
+				 	if ( src1_i>src2_i ) begin
+				 		result_o <= 1;
+				 	end
+				 	else begin
+				 		result_o <= 0;
+				 	end
+		end
+		4'b1110: begin // set greater equal than
+				 	if ( src1_i>=src2_i ) begin
+				 		result_o <= 1;
+				 	end
+				 	else begin
+				 		result_o <= 0;
+				 	end
+		end
+		default: // SRA(1000), SRAV(1000)
 			result_o <= $signed(src2_i)>>>src1_i;
 	endcase
 end

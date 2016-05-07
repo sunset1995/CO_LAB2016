@@ -51,8 +51,10 @@ wire           MemtoReg_o;
 wire           Jal_o;
 
 wire rtype;
+wire bltz;
 wire beq;
 wire bne;
+wire ble;
 wire addi;
 wire sltiu;
 wire ori;
@@ -64,8 +66,10 @@ wire jal;     // 000011
 
 
 assign rtype = (instr_op_i==0);
+assign bltz  = (instr_op_i==1);
 assign beq   = (instr_op_i==4);
 assign bne   = (instr_op_i==5);
+assign ble   = (instr_op_i==6);
 assign addi  = (instr_op_i==8);
 assign sltiu = (instr_op_i==9);
 assign ori   = (instr_op_i==13);
@@ -78,15 +82,15 @@ assign jal   = (instr_op_i==3);
 assign RegWrite_o = (rtype | addi | sltiu | ori | lui | lw | jal);
 assign ALUSrc_o   = (addi | sltiu | ori | lui | lw | sw);
 assign RegDst_o   = rtype;
-assign Branch_o   = (beq | bne);
+assign Branch_o   = (bltz | beq | bne | ble);
 assign Jump_o     = (jump | jal);
 assign MemRead_o  = lw;
 assign MemWrite_o = sw;
 assign MemtoReg_o = lw;
 assign Jal_o      = jal;
 
-assign ALU_op_o[2] = (beq | sltiu | lui);
-assign ALU_op_o[1] = (beq | bne | addi | sltiu | lw | sw);
-assign ALU_op_o[0] = (bne | sltiu | ori);
+assign ALU_op_o[2] = (beq | ble | sltiu | lui);
+assign ALU_op_o[1] = (beq | ble | bne | addi | sltiu | lw | sw);
+assign ALU_op_o[0] = (bltz | bne | ble | sltiu | ori);
 
 endmodule

@@ -37,7 +37,7 @@ always @(*) begin
 		37: ALUCtrl_o <= 4'b0001;
 		42: ALUCtrl_o <= 4'b0111;
 		default: begin
-			ALUCtrl_o[3]   <= 0;
+			ALUCtrl_o[3]   <= (ALUOp_i==1 || ALUOp_i==7);
 			ALUCtrl_o[2:0] <= ALUOp_i[2:0];
 		end
 	endcase
