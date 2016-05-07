@@ -48,6 +48,7 @@ always @(*) begin
 		end 
 		4'b0100: // LUI
 			result_o <= (src2_i<<16);
+		4'b0101: result_o <= src1_i * src2_i;
 		4'b0110: result_o <= src1_i - src2_i;
 		4'b0111: begin // slt
 				 	if( src1_i<src2_i ) begin

@@ -30,6 +30,7 @@ always @(*) begin
 	case(funct_i)
 		 3: ALUCtrl_o <= 4'b1000;
 		 7: ALUCtrl_o <= 4'b1000;
+		24: ALUCtrl_o <= 4'b0101;
 		32: ALUCtrl_o <= 4'b0010;
 		34: ALUCtrl_o <= 4'b0110;
 		36: ALUCtrl_o <= 4'b0000;
