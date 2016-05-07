@@ -20,7 +20,8 @@ module Decoder(
 	Jump_o,
 	MemRead_o,
 	MemWrite_o,
-	MemtoReg_o
+	MemtoReg_o,
+	Jal_o
 );
      
 //I/O ports
@@ -57,6 +58,7 @@ wire lui;
 wire jump;    // 000010
 wire lw;      // 100011
 wire sw;      // 101011
+wire jal;     // 000011
 
 
 assign rtype = (instr_op_i==0);
@@ -69,15 +71,17 @@ assign lui   = (instr_op_i==15);
 assign jump  = (instr_op_i==2);
 assign lw    = (instr_op_i==35);
 assign sw    = (instr_op_i==43);
+assign jal   = (instr_op_i==3);
 
-assign RegWrite_o = (rtype | addi | sltiu | ori | lui | lw);
+assign RegWrite_o = (rtype | addi | sltiu | ori | lui | lw | jal);
 assign ALUSrc_o   = (addi | sltiu | ori | lui | lw | sw);
 assign RegDst_o   = rtype;
 assign Branch_o   = (beq | bne);
-assign Jump_o     = jump;
+assign Jump_o     = (jump | jal);
 assign MemRead_o  = lw;
 assign MemWrite_o = sw;
 assign MemtoReg_o = lw;
+assign Jal_o      = jal;
 
 assign ALU_op_o[2] = (beq | sltiu | lui);
 assign ALU_op_o[1] = (beq | bne | addi | sltiu | lw | sw);

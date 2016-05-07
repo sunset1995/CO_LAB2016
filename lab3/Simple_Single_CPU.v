@@ -56,6 +56,7 @@ wire        Jump_o;
 wire        MemRead_o;
 wire        MemWrite_o;
 wire        MemtoReg_o;
+wire        Jal_o;
 
 // wire for ALUCtrl
 wire [3:0]  ALUCtrl_o;
@@ -107,14 +108,31 @@ MUX_2to1 #(.size(5)) Mux_Write_Reg(
         .select_i(RegDst_o),
         .data_o(data_o_right_reg)
 );	
-		
+
+wire final_write_reg;
+wire final_write_data;
+MUX_2to1 #(.size(5)) Jal_Write_Reg(
+        // Jal
+        .data0_i(data_o_right_reg),
+        .data1_i(31),
+        .select_i(Jal_o),
+        .data_o(final_write_reg)
+);
+MUX_2to1 #(.size(5)) Jal_Write_Data(
+        // Jal
+        .data0_i(write_back_data),
+        .data1_i(sum_o_add1),
+        .select_i(Jal_o),
+        .data_o(final_write_data)
+);
+
 Reg_File RF(
         .clk_i(clk_i),      
         .rst_i(rst_i),     
         .RSaddr_i(instr_o[25:21]) ,  
         .RTaddr_i(instr_o[20:16]) ,  
-        .RDaddr_i(data_o_right_reg),  
-        .RDdata_i(write_back_data), 
+        .RDaddr_i(final_write_reg),  
+        .RDdata_i(final_write_data), 
         .RegWrite_i (RegWrite_o),
         .RSdata_o(RSdata_o),  
         .RTdata_o(RTdata_o)   
@@ -130,7 +148,8 @@ Decoder Decoder(
         .Jump_o(Jump_o),
         .MemRead_o(MemRead_o),
         .MemWrite_o(MemWrite_o),
-        .MemtoReg_o(MemtoReg_o)
+        .MemtoReg_o(MemtoReg_o),
+        .Jal_o(Jal_o)
 );
 
 ALU_Ctrl AC(
