@@ -36,6 +36,7 @@ output         Jump_o;
 output         MemRead_o;
 output         MemWrite_o;
 output         MemtoReg_o;
+output         Jal_o;
  
 //Internal Signals
 wire           RegWrite_o;
@@ -47,6 +48,7 @@ wire           Jump_o;
 wire           MemRead_o;
 wire           MemWrite_o;
 wire           MemtoReg_o;
+wire           Jal_o;
 
 wire rtype;
 wire beq;
