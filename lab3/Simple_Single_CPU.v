@@ -175,7 +175,7 @@ wire [31:0] RFD1_or_shamt;
 MUX_2to1 #(.size(32)) Mux_Shift_op(
         .data0_i(RSdata_o),
         .data1_i({27'b0,instr_o[10:6]}),
-        .select_i(instr_o[5:0]==3),
+        .select_i({instr_o[31:26],instr_o[5:0]}==3),
         .data_o(RFD1_or_shamt)
 );      
 
