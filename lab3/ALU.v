@@ -51,7 +51,7 @@ always @(*) begin
 		4'b0101: result_o <= src1_i * src2_i;
 		4'b0110: result_o <= src1_i - src2_i;
 		4'b0111: begin // slt
-				 	if( src1_i<src2_i ) begin
+				 	if( $signed(src1_i)<$signed(src2_i) ) begin
 				 		result_o <= 1;
 				 	end
 				 	else begin
@@ -59,15 +59,15 @@ always @(*) begin
 				 	end
 				 end
 		4'b1111: begin // set greater than
-				 	if ( src1_i>src2_i ) begin
+				 	if ( $signed(src1_i)>$signed(src2_i) ) begin
 				 		result_o <= 1;
 				 	end
 				 	else begin
 				 		result_o <= 0;
 				 	end
 		end
-		4'b1110: begin // set greater equal than
-				 	if ( src1_i>=src2_i ) begin
+		4'b1001: begin // set greater equal than
+				 	if ( $signed(src1_i)>=$signed(src2_i) ) begin
 				 		result_o <= 1;
 				 	end
 				 	else begin
