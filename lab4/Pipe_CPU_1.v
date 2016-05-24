@@ -24,6 +24,10 @@ Internal signal
 ****************************************/
 /**** IF stage ****/
 
+//orignal wire
+wire [31:0] pc_in_i;
+wire [31:0] pc_out_o;
+
 wire [31:0] IF_ID_pc_4_i;
 wire [31:0] IF_ID_im_i;
 wire [31:0] IF_ID_pc_4_o;
@@ -103,6 +107,13 @@ wire        MEM_write_data_o;
 Instnatiate modules
 ****************************************/
 //Instantiate the components in IF stage
+MUX_2to1 #(.size(32)) Mux0(
+		.data0_i(IF_ID_pc_4_i),
+        .data1_i(EX_MEM_add_result_o),
+        .select_i(EX_MEM_zero_o & EX_MEM_branch_o),
+        .data_o(pc_in_i)
+        );
+
 ProgramCounter PC(
         .clk_i(clk_i),      
         .rst_i (rst_i),     
@@ -139,9 +150,9 @@ Reg_File RF(
         .rst_i(rst_i),     
         .RSaddr_i(IF_ID_im_o[25:21]) ,  
         .RTaddr_i(IF_ID_im_o[20:16]) ,  
-        .RDaddr_i(final_write_reg), // WBstage  
-        .RDdata_i(final_write_data), //WBstage
-        .RegWrite_i (RegWrite_o), // WBstage
+        .RDaddr_i(MEM_WB_reg_dst_o), // WBstage  
+        .RDdata_i(MEM_write_data_o), //WBstage
+        .RegWrite_i (MEM_WB_reg_write_o), // WBstage
         .RSdata_o(ID_EX_read_data_1),  
         .RTdata_o(ID_EX_read_data_2)   
 );
@@ -153,11 +164,11 @@ Decoder Control(
         .ALUSrc_o(ID_EX_alu_src_i),   
         .RegDst_o(ID_EX_reg_dst_i),   
         .Branch_o(ID_EX_branch_i),
-        .Jump_o(),
+        .Jump_o(1'b0),
         .MemRead_o(ID_EX_mem_read_i),
         .MemWrite_o(ID_EX_mem_write_i),
         .MemtoReg_o(ID_EX_mem_to_reg_i),
-        .Jal_o()
+        .Jal_o(1'b0)
         );
 
 Sign_Extend Sign_Extend(
@@ -234,9 +245,6 @@ Pipe_Reg #(.size(N)) EX_MEM(
         );
                
 //Instantiate the components in MEM stage
-EX_MEM_zero_o;       !!!!!
-EX_MEM_add_result_o; !!!!!
-EX_MEM_branch_o;     !!!!!
 assign MEM_WB_reg_dst_i    = EX_MEM_reg_rst_o;
 assign MEM_WB_alu_result_i = EX_MEM_alu_result_o;
 assign EX_MEM_mem_to_reg_o = MEM_WB_mem_to_reg_i;
@@ -270,9 +278,6 @@ Pipe_Reg #(.size(N)) MEM_WB(
         );
 
 //Instantiate the components in WB stage
-MEM_WB_reg_dst_o;   !!!!!!!!!!!!
-MEM_WB_reg_write_o; !!!!!!!!!!!!
-MEM_write_data_o;   !!!!!!!!!!!!
 MUX_2to1 #(.size(32)) Mux2(
         .data0_i(MEM_WB_alu_result_o),
         .data1_i(MEM_WB_read_data_o),
