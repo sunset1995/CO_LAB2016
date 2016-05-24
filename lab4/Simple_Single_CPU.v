@@ -13,7 +13,7 @@ module Simple_Single_CPU(
         clk_i,
         rst_i
 );
-		
+                
 //I/O port
 input       clk_i;
 input       rst_i;
@@ -90,13 +90,13 @@ ProgramCounter PC(
         .pc_in_i(pc_in_i) ,   
         .pc_out_o(pc_out_o) 
 );
-	
+        
 Adder Adder1(
         .src1_i(32'd4),     
         .src2_i(pc_out_o),     
         .sum_o(sum_o_add1)    
 );
-	
+        
 Instr_Memory IM(
         .addr_i(pc_out_o),  
         .instr_o(instr_o)    
@@ -107,7 +107,7 @@ MUX_2to1 #(.size(5)) Mux_Write_Reg(
         .data1_i(instr_o[15:11]),
         .select_i(RegDst_o),
         .data_o(data_o_right_reg)
-);	
+);      
 
 wire [4:0]  final_write_reg;
 wire [31:0] final_write_data;
@@ -137,7 +137,7 @@ Reg_File RF(
         .RSdata_o(RSdata_o),  
         .RTdata_o(RTdata_o)   
 );
-	
+        
 Decoder Decoder(
         .instr_op_i(instr_o[31:26]), 
         .RegWrite_o(RegWrite_o), 
@@ -157,7 +157,7 @@ ALU_Ctrl AC(
         .ALUOp_i(ALU_op_o),   
         .ALUCtrl_o(ALUCtrl_o) 
 );
-	
+        
 Sign_Extend SE(
         .data_i(instr_o[15:0]),
         .data_o(data_o_SE)
@@ -168,8 +168,8 @@ MUX_2to1 #(.size(32)) Mux_ALUSrc(
         .data1_i(data_o_SE),
         .select_i(ALUSrc_o),
         .data_o(Src_data_o)
-);	
-		
+);      
+                
 // decide alu src_1 from RF or from shamt
 wire [31:0] RFD1_or_shamt;
 MUX_2to1 #(.size(32)) Mux_Shift_op(
@@ -186,18 +186,18 @@ ALU ALU(
         .result_o(result_o),
         .zero_o(zero_o)
 );
-		
+                
 Adder Adder2(
         .src1_i(sum_o_add1),     
         .src2_i(data_o_shift),     
         .sum_o(sum_o_adder2)      
 );
-		
+                
 Shift_Left_Two_32 Shifter(
         .data_i(data_o_SE),
         .data_o(data_o_shift)
-); 		
-		
+);              
+                
 MUX_2to1 #(.size(32)) Mux_PC_Source(
         .data0_i(sum_o_add1),
         .data1_i(sum_o_adder2),
@@ -206,7 +206,7 @@ MUX_2to1 #(.size(32)) Mux_PC_Source(
 );
 
 // MEM
-Data_Memory Data_Memory(
+Data_Memory DM(
         .clk_i(clk_i),
         .addr_i(result_o),
         .data_i(RTdata_o),
