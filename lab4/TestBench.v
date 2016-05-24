@@ -22,7 +22,7 @@ integer     i;
 integer     handle;
 
 //Greate tested modle  
-Simple_Single_CPU cpu(
+Pipe_CPU_1 cpu(
     .clk_i(CLK),
     .rst_i(RST)
     );
