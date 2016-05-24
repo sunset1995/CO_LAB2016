@@ -12,7 +12,7 @@ module Pipe_CPU_1(
         clk_i,
 		rst_i
 		);
-    
+parameter N = 300;
 /****************************************
 I/O ports
 ****************************************/
@@ -24,15 +24,52 @@ Internal signal
 ****************************************/
 /**** IF stage ****/
 
+wire [31:0] IF_ID_pc_4_i;
+wire [31:0] IF_ID_im_i;
+wire [31:0] IF_ID_pc_4_o;
+wire [31:0] IF_ID_im_o;
 
 /**** ID stage ****/
 
 //control signal
 
+wire           ID_EX_mem_to_reg_i;
+wire           ID_EX_reg_write_i;
+wire           ID_EX_mem_to_reg_o;
+wire           ID_EX_reg_write_o;
+// WB stage
+
+wire           ID_EX_mem_read_i;
+wire           ID_EX_mem_write_i;
+wire           ID_EX_branch_i;
+wire           ID_EX_mem_read_o;
+wire           ID_EX_mem_write_o;
+wire           ID_EX_branch_o;
+// MEM stage
+
+wire   [3-1:0] ID_EX_alu_op_i;
+wire           ID_EX_alu_src_i;
+wire           ID_EX_reg_dst_i;
+wire   [3-1:0] ID_EX_alu_op_o;
+wire           ID_EX_alu_src_o;
+wire           ID_EX_reg_dst_o;
+// EX stage
+
+
+wire [31:0] ID_EX_pc_4;
+wire [31:0] ID_EX_read_data_1;
+wire [31:0] ID_EX_read_data_2;
+wire [31:0] ID_EX_sign_extend;
+wire [4:0]  ID_EX_ins_up;
+wire [4:0]  ID_EX_ins_down;
+
+
+
 
 /**** EX stage ****/
 
 //control signal
+
 
 
 /**** MEM stage ****/
@@ -50,46 +87,111 @@ Instnatiate modules
 ****************************************/
 //Instantiate the components in IF stage
 ProgramCounter PC(
-
-        );
+        .clk_i(clk_i),      
+        .rst_i (rst_i),     
+        .pc_in_i(pc_in_i) ,   
+        .pc_out_o(pc_out_o) 
+);
 
 Instr_Memory IM(
-
-	    );
+        .addr_i(pc_out_o),  
+        .instr_o(IF_ID_im_i)    
+);
 			
 Adder Add_pc(
-
-		);
+        .src1_i(32'd4),     
+        .src2_i(pc_out_o),     
+        .sum_o(IF_ID_pc_4_i)    
+);
 
 		
 Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
-
+		.clk_i(clk_i),
+		.rst_i(rst_i),
+		.data_i({
+				IF_ID_pc_4_i,
+				IF_ID_im_i
+				}),
+		.data_o({
+				IF_ID_pc_4_o,
+				IF_ID_im_o
+				})
 		);
 		
 //Instantiate the components in ID stage
-Reg_File RF(
 
-		);
+Reg_File RF(
+        .clk_i(clk_i),      
+        .rst_i(rst_i),     
+        .RSaddr_i(IF_ID_im_o[25:21]) ,  
+        .RTaddr_i(IF_ID_im_o[20:16]) ,  
+        .RDaddr_i(final_write_reg), // WBstage  
+        .RDdata_i(final_write_data), //WBstage
+        .RegWrite_i (RegWrite_o), // WBstage
+        .RSdata_o(ID_EX_read_data_1),  
+        .RTdata_o(ID_EX_read_data_2)   
+);
 
 Decoder Control(
+		.instr_op_i(IF_ID_im_o[31:26]), 
+        .RegWrite_o(ID_EX_reg_write_i),
+        .ALU_op_o(ID_EX_alu_op_i),   
+        .ALUSrc_o(ID_EX_alu_src_i),   
+        .RegDst_o(ID_EX_reg_dst_i),   
+        .Branch_o(ID_EX_branch_i),
+        .Jump_o(),
+        .MemRead_o(ID_EX_mem_read_i),
+        .MemWrite_o(ID_EX_mem_write_i),
+        .MemtoReg_o(ID_EX_mem_to_reg_i),
+        .Jal_o()
 
 		);
 
 Sign_Extend Sign_Extend(
-
+		.data_i(IF_ID_im_o[15:0]),
+        .data_o(ID_EX_sign_extend)
 		);	
 
 Pipe_Reg #(.size(N)) ID_EX(
+.clk_i(clk_i),
+		.rst_i(rst_i),
+		.data_i({
+				ID_EX_mem_to_reg_i,
+				ID_EX_reg_write_i,
+				ID_EX_mem_read_i,
+				ID_EX_mem_write_i,
+				ID_EX_branch_i,
+				ID_EX_alu_op_i,
+				ID_EX_alu_src_i,
+				ID_EX_reg_dst_i
+				}),
+		.data_o({
+				ID_EX_mem_to_reg_o,
+				ID_EX_reg_write_o,
+				ID_EX_mem_read_o,
+				ID_EX_mem_write_o,
+				ID_EX_branch_o,
+				ID_EX_alu_op_o,
+				ID_EX_alu_src_o,
+				ID_EX_reg_dst_o
+				})
 
 		);
 		
 //Instantiate the components in EX stage	   
 ALU ALU(
-
-		);
+        .src1_i(RFD1_or_shamt),
+        .src2_i(Src_data_o),
+        .ctrl_i(ALUCtrl_o),
+        .result_o(result_o),
+        .zero_o(zero_o)
+);
 		
 ALU_Control ALU_Control(
-
+        .funct_i(IF_ID_im_o[5:0]),   
+        .ALUOp_i(ID_EX_alu_op_i),   
+        .ALUCtrl_o(ALUCtrl_o) 
+);
 		);
 
 MUX_2to1 #(.size(32)) Mux1(
