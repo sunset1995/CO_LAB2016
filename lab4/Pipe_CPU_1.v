@@ -60,24 +60,47 @@ wire           ID_EX_reg_dst_o;
 // EX stage
 
 
-wire [31:0] ID_EX_pc_4;
-wire [31:0] ID_EX_read_data_1;
-wire [31:0] ID_EX_read_data_2;
-wire [31:0] ID_EX_sign_extend;
-wire [4:0]  ID_EX_ins_up;
-wire [4:0]  ID_EX_ins_down;
+wire [31:0] ID_EX_pc_4_i;
+wire [31:0] ID_EX_read_data_1_i;
+wire [31:0] ID_EX_read_data_2_i;
+wire [31:0] ID_EX_sign_extend_i;
+wire [4:0]  ID_EX_ins_up_i;
+wire [4:0]  ID_EX_ins_down_i;
+wire [5:0]  ID_EX_ins_op_i = IF_ID_im_o[31:26];
+wire [31:0] ID_EX_pc_4_o;
+wire [31:0] ID_EX_read_data_1_o;
+wire [31:0] ID_EX_read_data_2_o;
+wire [31:0] ID_EX_sign_extend_o;
+wire [4:0]  ID_EX_ins_up_o;
+wire [4:0]  ID_EX_ins_down_o;
+wire [5:0]  ID_EX_ins_op_o;
 
 
 
 
 /**** EX stage ****/
 
+
+wire [ 4:0] EX_MEM_reg_dst_i;
+wire [31:0] EX_MEM_write_data_i;
+wire [31:0] EX_MEM_alu_result_i;
+wire        EX_MEM_zero_i;
+wire        EX_MEM_add_result_i;
+wire        EX_MEM_branch_i = ID_EX_branch_o;
+wire        EX_MEM_mem_write_i = ID_EX_mem_write_o;
+wire        EX_MEM_mem_read_i = ID_EX_mem_read_o;
+wire        EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o;
+wire        EX_MEM_reg_write_i = ID_EX_reg_write_o;
+
+// MEM stage
+
 //control signal
-
-
+wire [31:0] EX_alu_src_1;
+wire [31:0] EX_alu_src_2;
+wire [3:0]  ALUCtrl_o;
 
 /**** MEM stage ****/
-wire [ 4:0] EX_MEM_reg_rst_o;
+wire [ 4:0] EX_MEM_reg_dst_o;
 wire [31:0] EX_MEM_write_data_o;
 wire [31:0] EX_MEM_alu_result_o;
 wire        EX_MEM_zero_o;
@@ -153,8 +176,8 @@ Reg_File RF(
         .RDaddr_i(MEM_WB_reg_dst_o), // WBstage  
         .RDdata_i(MEM_write_data_o), //WBstage
         .RegWrite_i (MEM_WB_reg_write_o), // WBstage
-        .RSdata_o(ID_EX_read_data_1),  
-        .RTdata_o(ID_EX_read_data_2)   
+        .RSdata_o(ID_EX_read_data_1_i),  
+        .RTdata_o(ID_EX_read_data_2_i)   
 );
 
 Decoder Control(
@@ -173,7 +196,7 @@ Decoder Control(
 
 Sign_Extend Sign_Extend(
         .data_i(IF_ID_im_o[15:0]),
-        .data_o(ID_EX_sign_extend)
+        .data_o(ID_EX_sign_extend_i)
         );  
 
 Pipe_Reg #(.size(N)) ID_EX(
@@ -187,7 +210,14 @@ Pipe_Reg #(.size(N)) ID_EX(
                 ID_EX_branch_i,
                 ID_EX_alu_op_i,
                 ID_EX_alu_src_i,
-                ID_EX_reg_dst_i
+                ID_EX_reg_dst_i,
+                ID_EX_pc_4_i,
+                ID_EX_read_data_1_i,
+                ID_EX_read_data_2_i,
+                ID_EX_sign_extend_i,
+                ID_EX_ins_up_i,
+                ID_EX_ins_down_i,
+                ID_EX_ins_op_i
                 }),
         .data_o({
                 ID_EX_mem_to_reg_o,
@@ -197,7 +227,14 @@ Pipe_Reg #(.size(N)) ID_EX(
                 ID_EX_branch_o,
                 ID_EX_alu_op_o,
                 ID_EX_alu_src_o,
-                ID_EX_reg_dst_o
+                ID_EX_reg_dst_o,
+                ID_EX_pc_4_o,
+                ID_EX_read_data_1_o,
+                ID_EX_read_data_2_o,
+                ID_EX_sign_extend_o,
+                ID_EX_ins_up_o,
+                ID_EX_ins_down_o,
+                ID_EX_ins_op_o
                 })
 
         );
@@ -212,26 +249,54 @@ ALU ALU(
 );
         
 ALU_Control ALU_Control(
-        .funct_i(IF_ID_im_o[5:0]),   
-        .ALUOp_i(ID_EX_alu_op_i),   
+        .funct_i(ID_EX_sign_extend_o[5:0]),   
+        .ALUOp_i(ID_EX_alu_op_o),   
         .ALUCtrl_o(ALUCtrl_o) 
 );
 
 MUX_2to1 #(.size(32)) Mux1(
-
+        .data0_i(ID_EX_read_data_2_o),
+        .data1_i(ID_EX_sign_extend_o),
+        .select_i(ID_EX_alu_src_o),
+        .data_o(EX_alu_src_2)
         );
         
 MUX_2to1 #(.size(5)) Mux2(
+		.data0_i(ID_EX_ins_up),
+        .data1_i(ID_EX_ins_down),
+        .select_i(ID_EX_reg_dst_o),
+        .data_o(EX_MEM_reg_dst_i)
+        );
 
+MUX_2to1 #(.size(32)) Mux_SRA(
+        .data0_i(ID_EX_read_data_1_o),
+        .data1_i({27'b0,ID_EX_sign_extend_o[10:6]}),
+        .select_i({ID_EX_ins_op_o,ID_EX_sign_extend_o[5:0]}==3),
+        .data_o(EX_alu_src_1)
+        );
+Adder Branch_pc(
+        .src1_i(ID_EX_pc_4_o),     
+        .src2_i({ID_EX_sign_extend_o,2'b0}),     
+        .sum_o(EX_MEM_add_result_i)    
         );
 
 Pipe_Reg #(.size(N)) EX_MEM(
         clk_i(clk_i),
         rst_i(rst_i),
         data_i({
+            EX_MEM_reg_dst_i,
+            EX_MEM_write_data_i,
+            EX_MEM_alu_result_i,
+            EX_MEM_zero_i,
+            EX_MEM_add_result_i,
+            EX_MEM_branch_i,
+            EX_MEM_mem_write_i,
+            EX_MEM_mem_read_i,
+            EX_MEM_mem_to_reg_i,
+            EX_MEM_reg_write_i
             }),
         data_o({
-            EX_MEM_reg_rst_o,
+            EX_MEM_reg_dst_o,
             EX_MEM_write_data_o,
             EX_MEM_alu_result_o,
             EX_MEM_zero_o,
@@ -245,7 +310,7 @@ Pipe_Reg #(.size(N)) EX_MEM(
         );
                
 //Instantiate the components in MEM stage
-assign MEM_WB_reg_dst_i    = EX_MEM_reg_rst_o;
+assign MEM_WB_reg_dst_i    = EX_MEM_reg_dst_o;
 assign MEM_WB_alu_result_i = EX_MEM_alu_result_o;
 assign EX_MEM_mem_to_reg_o = MEM_WB_mem_to_reg_i;
 assign EX_MEM_reg_write_o  = MEM_WB_reg_write_i;
