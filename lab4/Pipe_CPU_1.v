@@ -319,8 +319,8 @@ Pipe_Reg #(.size(N)) EX_MEM(
 //Instantiate the components in MEM stage
 assign MEM_WB_reg_dst_i    = EX_MEM_reg_dst_o;
 assign MEM_WB_alu_result_i = EX_MEM_alu_result_o;
-assign EX_MEM_mem_to_reg_o = MEM_WB_mem_to_reg_i;
-assign EX_MEM_reg_write_o  = MEM_WB_reg_write_i;
+assign MEM_WB_mem_to_reg_i = EX_MEM_mem_to_reg_o;
+assign MEM_WB_reg_write_i  = EX_MEM_reg_write_o;
 Data_Memory DM(
         .clk_i(clk_i),
         .addr_i(EX_MEM_alu_result_o),
