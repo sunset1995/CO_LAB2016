@@ -85,12 +85,13 @@ wire [ 4:0] EX_MEM_reg_dst_i;
 wire [31:0] EX_MEM_write_data_i;
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
-wire        EX_MEM_add_result_i;
+wire [31:0] EX_MEM_add_result_i;
 wire        EX_MEM_branch_i = ID_EX_branch_o;
 wire        EX_MEM_mem_write_i = ID_EX_mem_write_o;
 wire        EX_MEM_mem_read_i = ID_EX_mem_read_o;
 wire        EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o;
 wire        EX_MEM_reg_write_i = ID_EX_reg_write_o;
+wire [31:0] EX_shift_left_2_o;
 
 // MEM stage
 
@@ -104,7 +105,7 @@ wire [ 4:0] EX_MEM_reg_dst_o;
 wire [31:0] EX_MEM_write_data_o;
 wire [31:0] EX_MEM_alu_result_o;
 wire        EX_MEM_zero_o;
-wire        EX_MEM_add_result_o;
+wire [31:0] EX_MEM_add_result_o;
 wire        EX_MEM_branch_o;
 wire        EX_MEM_mem_write_o;
 wire        EX_MEM_mem_read_o;
@@ -124,14 +125,14 @@ wire [31:0] MEM_WB_alu_result_o;
 wire [31:0] MEM_WB_read_data_o;
 wire        MEM_WB_mem_to_reg_o;
 wire        MEM_WB_reg_write_o;
-wire        MEM_write_data_o;
+wire [31:0] MEM_write_data_o;
 
 /****************************************
 Instnatiate modules
 ****************************************/
 //Instantiate the components in IF stage
 MUX_2to1 #(.size(32)) Mux0(
-		.data0_i(IF_ID_pc_4_i),
+        .data0_i(IF_ID_pc_4_i),
         .data1_i(EX_MEM_add_result_o),
         .select_i(EX_MEM_zero_o & EX_MEM_branch_o),
         .data_o(pc_in_i)
@@ -187,11 +188,11 @@ Decoder Control(
         .ALUSrc_o(ID_EX_alu_src_i),   
         .RegDst_o(ID_EX_reg_dst_i),   
         .Branch_o(ID_EX_branch_i),
-        .Jump_o(1'b0),
+        .Jump_o(),
         .MemRead_o(ID_EX_mem_read_i),
         .MemWrite_o(ID_EX_mem_write_i),
         .MemtoReg_o(ID_EX_mem_to_reg_i),
-        .Jal_o(1'b0)
+        .Jal_o()
         );
 
 Sign_Extend Sign_Extend(
@@ -241,14 +242,14 @@ Pipe_Reg #(.size(N)) ID_EX(
         
 //Instantiate the components in EX stage       
 ALU ALU(
-        .src1_i(RFD1_or_shamt),
-        .src2_i(Src_data_o),
+        .src1_i(EX_alu_src_1),
+        .src2_i(EX_alu_src_2),
         .ctrl_i(ALUCtrl_o),
-        .result_o(result_o),
-        .zero_o(zero_o)
+        .result_o(EX_MEM_alu_result_i),
+        .zero_o(EX_MEM_zero_i)
 );
         
-ALU_Control ALU_Control(
+ALU_Ctrl ALU_Control(
         .funct_i(ID_EX_sign_extend_o[5:0]),   
         .ALUOp_i(ID_EX_alu_op_o),   
         .ALUCtrl_o(ALUCtrl_o) 
@@ -262,8 +263,8 @@ MUX_2to1 #(.size(32)) Mux1(
         );
         
 MUX_2to1 #(.size(5)) Mux2(
-		.data0_i(ID_EX_ins_up),
-        .data1_i(ID_EX_ins_down),
+        .data0_i(ID_EX_ins_up_i),
+        .data1_i(ID_EX_ins_down_i),
         .select_i(ID_EX_reg_dst_o),
         .data_o(EX_MEM_reg_dst_i)
         );
@@ -274,16 +275,22 @@ MUX_2to1 #(.size(32)) Mux_SRA(
         .select_i({ID_EX_ins_op_o,ID_EX_sign_extend_o[5:0]}==3),
         .data_o(EX_alu_src_1)
         );
+
+Shift_Left_Two_32 Shifter(
+        .data_i(ID_EX_sign_extend_o),
+        .data_o(EX_shift_left_2_o)
+);       
+
 Adder Branch_pc(
         .src1_i(ID_EX_pc_4_o),     
-        .src2_i({ID_EX_sign_extend_o,2'b0}),     
+        .src2_i(EX_shift_left_2_o),     
         .sum_o(EX_MEM_add_result_i)    
         );
 
 Pipe_Reg #(.size(N)) EX_MEM(
-        clk_i(clk_i),
-        rst_i(rst_i),
-        data_i({
+        .clk_i(clk_i),
+        .rst_i(rst_i),
+        .data_i({
             EX_MEM_reg_dst_i,
             EX_MEM_write_data_i,
             EX_MEM_alu_result_i,
@@ -295,7 +302,7 @@ Pipe_Reg #(.size(N)) EX_MEM(
             EX_MEM_mem_to_reg_i,
             EX_MEM_reg_write_i
             }),
-        data_o({
+        .data_o({
             EX_MEM_reg_dst_o,
             EX_MEM_write_data_o,
             EX_MEM_alu_result_o,
@@ -324,16 +331,16 @@ Data_Memory DM(
         );
 
 Pipe_Reg #(.size(N)) MEM_WB(
-        clk_i(clk_i),
-        rst_i(rst_i),
-        data_i({
+        .clk_i(clk_i),
+        .rst_i(rst_i),
+        .data_i({
             MEM_WB_reg_dst_i,
             MEM_WB_alu_result_i,
             MEM_WB_read_data_i,
             MEM_WB_mem_to_reg_i,
             MEM_WB_reg_write_i
             }),
-        data_o({
+        .data_o({
             MEM_WB_reg_dst_o,
             MEM_WB_alu_result_o,
             MEM_WB_read_data_o,
@@ -343,7 +350,7 @@ Pipe_Reg #(.size(N)) MEM_WB(
         );
 
 //Instantiate the components in WB stage
-MUX_2to1 #(.size(32)) Mux2(
+MUX_2to1 #(.size(32)) Mux_last(
         .data0_i(MEM_WB_alu_result_o),
         .data1_i(MEM_WB_read_data_o),
         .select_i(MEM_WB_mem_to_reg_o),
@@ -354,4 +361,3 @@ MUX_2to1 #(.size(32)) Mux2(
 signal assignment
 ****************************************/   
 endmodule
-
