@@ -82,7 +82,7 @@ wire [5:0]  ID_EX_ins_op_o;
 
 
 wire [ 4:0] EX_MEM_reg_dst_i;
-wire [31:0] EX_MEM_write_data_i = ID_EX_read_data_2_o;
+wire [31:0] EX_MEM_write_data_i = ID_EX_read_data_2_o[31:0];
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
 wire [31:0] EX_MEM_add_result_i;
