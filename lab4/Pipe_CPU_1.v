@@ -60,12 +60,12 @@ wire           ID_EX_reg_dst_o;
 // EX stage
 
 
-wire [31:0] ID_EX_pc_4_i;
+wire [31:0] ID_EX_pc_4_i = IF_ID_pc_4_o;
 wire [31:0] ID_EX_read_data_1_i;
 wire [31:0] ID_EX_read_data_2_i;
 wire [31:0] ID_EX_sign_extend_i;
-wire [4:0]  ID_EX_ins_up_i;
-wire [4:0]  ID_EX_ins_down_i;
+wire [4:0]  ID_EX_ins_up_i = IF_ID_im_o[20:16];
+wire [4:0]  ID_EX_ins_down_i = IF_ID_im_o[15:11];
 wire [5:0]  ID_EX_ins_op_i = IF_ID_im_o[31:26];
 wire [31:0] ID_EX_pc_4_o;
 wire [31:0] ID_EX_read_data_1_o;
@@ -82,7 +82,7 @@ wire [5:0]  ID_EX_ins_op_o;
 
 
 wire [ 4:0] EX_MEM_reg_dst_i;
-wire [31:0] EX_MEM_write_data_i;
+wire [31:0] EX_MEM_write_data_i = ID_EX_read_data_2_o;
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
 wire [31:0] EX_MEM_add_result_i;
@@ -168,7 +168,7 @@ Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
                 IF_ID_im_o
                 })
         );
-        
+
 Reg_File RF(
         .clk_i(clk_i),      
         .rst_i(rst_i),     
@@ -263,8 +263,8 @@ MUX_2to1 #(.size(32)) Mux1(
         );
         
 MUX_2to1 #(.size(5)) Mux2(
-        .data0_i(ID_EX_ins_up_i),
-        .data1_i(ID_EX_ins_down_i),
+        .data0_i(ID_EX_ins_up_o),
+        .data1_i(ID_EX_ins_down_o),
         .select_i(ID_EX_reg_dst_o),
         .data_o(EX_MEM_reg_dst_i)
         );
