@@ -106,11 +106,11 @@ wire [31:0] EX_MEM_write_data_i = EX_rt_data[31:0];
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
 wire [31:0] EX_MEM_add_result_i;
-wire        EX_MEM_branch_i = ID_EX_branch_o;
-wire        EX_MEM_mem_write_i = ID_EX_mem_write_o;
-wire        EX_MEM_mem_read_i = ID_EX_mem_read_o;
-wire        EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o;
-wire        EX_MEM_reg_write_i = ID_EX_reg_write_o;
+wire        EX_MEM_branch_i = ID_EX_branch_o && !MEM_branch_take;
+wire        EX_MEM_mem_write_i = ID_EX_mem_write_o && !MEM_branch_take;
+wire        EX_MEM_mem_read_i = ID_EX_mem_read_o && !MEM_branch_take;
+wire        EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o && !MEM_branch_take;
+wire        EX_MEM_reg_write_i = ID_EX_reg_write_o && !MEM_branch_take;
 wire [31:0] EX_shift_left_2_o;
 
 // MEM stage
@@ -138,6 +138,7 @@ wire [31:0] MEM_WB_read_data_i;
 wire        MEM_WB_mem_to_reg_i;
 wire        MEM_WB_reg_write_i;
 
+wire        MEM_branch_take = EX_MEM_zero_o && EX_MEM_branch_o;
 
 /**** WB stage ****/
 wire [ 4:0] MEM_WB_reg_dst_o;
@@ -154,7 +155,7 @@ Instnatiate modules
 MUX_2to1 #(.size(32)) Mux0(
         .data0_i(IF_ID_pc_4_i),
         .data1_i(EX_MEM_add_result_o),
-        .select_i(EX_MEM_zero_o & EX_MEM_branch_o),
+        .select_i(MEM_branch_take),
         .data_o(pc_in_i)
         );
 
@@ -249,16 +250,16 @@ Sign_Extend Sign_Extend(
         );
 
 
-assign ID_EX_mem_to_reg_i = ID_EX_mem_to_reg_i_tmp && !ID_lw_stall;
-assign ID_EX_reg_write_i  = ID_EX_reg_write_i_tmp  && !ID_lw_stall;
-assign ID_EX_mem_read_i   = ID_EX_mem_read_i_tmp   && !ID_lw_stall;
-assign ID_EX_mem_write_i  = ID_EX_mem_write_i_tmp  && !ID_lw_stall;
-assign ID_EX_branch_i     = ID_EX_branch_i_tmp     && !ID_lw_stall;
-assign ID_EX_alu_op_i[0]  = ID_EX_alu_op_i_tmp[0]  && !ID_lw_stall;
-assign ID_EX_alu_op_i[1]  = ID_EX_alu_op_i_tmp[1]  && !ID_lw_stall;
-assign ID_EX_alu_op_i[2]  = ID_EX_alu_op_i_tmp[2]  && !ID_lw_stall;
-assign ID_EX_alu_src_i    = ID_EX_alu_src_i_tmp    && !ID_lw_stall;
-assign ID_EX_reg_dst_i    = ID_EX_reg_dst_i_tmp    && !ID_lw_stall;
+assign ID_EX_mem_to_reg_i = ID_EX_mem_to_reg_i_tmp && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_reg_write_i  = ID_EX_reg_write_i_tmp  && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_mem_read_i   = ID_EX_mem_read_i_tmp   && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_mem_write_i  = ID_EX_mem_write_i_tmp  && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_branch_i     = ID_EX_branch_i_tmp     && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_alu_op_i[0]  = ID_EX_alu_op_i_tmp[0]  && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_alu_op_i[1]  = ID_EX_alu_op_i_tmp[1]  && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_alu_op_i[2]  = ID_EX_alu_op_i_tmp[2]  && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_alu_src_i    = ID_EX_alu_src_i_tmp    && !ID_lw_stall && !MEM_branch_take;
+assign ID_EX_reg_dst_i    = ID_EX_reg_dst_i_tmp    && !ID_lw_stall && !MEM_branch_take;
 
 Pipe_Reg #(.size(N)) ID_EX(
         .clk_i(clk_i),
@@ -408,8 +409,8 @@ Pipe_Reg #(.size(N)) EX_MEM(
 //Instantiate the components in MEM stage
 assign MEM_WB_reg_dst_i    = EX_MEM_reg_dst_o;
 assign MEM_WB_alu_result_i = EX_MEM_alu_result_o;
-assign MEM_WB_mem_to_reg_i = EX_MEM_mem_to_reg_o;
-assign MEM_WB_reg_write_i  = EX_MEM_reg_write_o;
+assign MEM_WB_mem_to_reg_i = EX_MEM_mem_to_reg_o && !MEM_branch_take;
+assign MEM_WB_reg_write_i  = EX_MEM_reg_write_o && !MEM_branch_take;
 Data_Memory DM(
         .clk_i(clk_i),
         .addr_i(EX_MEM_alu_result_o),
