@@ -33,16 +33,25 @@ wire [31:0] IF_ID_im_i;
 wire [31:0] IF_ID_pc_4_o;
 wire [31:0] IF_ID_im_o;
 
+wire [31:0] IF_ID_pc_4_o_tmp;
+wire [31:0] IF_ID_im_o_tmp;
+wire [31:0] IF_pc;
+
 /**** ID stage ****/
 
 //control signal
 
+wire           ID_EX_mem_to_reg_i_tmp;
+wire           ID_EX_reg_write_i_tmp;
 wire           ID_EX_mem_to_reg_i;
 wire           ID_EX_reg_write_i;
 wire           ID_EX_mem_to_reg_o;
 wire           ID_EX_reg_write_o;
 // WB stage
 
+wire           ID_EX_mem_read_i_tmp;
+wire           ID_EX_mem_write_i_tmp;
+wire           ID_EX_branch_i_tmp;
 wire           ID_EX_mem_read_i;
 wire           ID_EX_mem_write_i;
 wire           ID_EX_branch_i;
@@ -51,6 +60,9 @@ wire           ID_EX_mem_write_o;
 wire           ID_EX_branch_o;
 // MEM stage
 
+wire   [3-1:0] ID_EX_alu_op_i_tmp;
+wire           ID_EX_alu_src_i_tmp;
+wire           ID_EX_reg_dst_i_tmp;
 wire   [3-1:0] ID_EX_alu_op_i;
 wire           ID_EX_alu_src_i;
 wire           ID_EX_reg_dst_i;
@@ -76,6 +88,8 @@ wire [4:0]  ID_EX_ins_rs_o;
 wire [4:0]  ID_EX_ins_up_o;
 wire [4:0]  ID_EX_ins_down_o;
 wire [5:0]  ID_EX_ins_op_o;
+
+wire        ID_lw_stall;
 
 
 
@@ -148,7 +162,7 @@ ProgramCounter PC(
         .clk_i(clk_i),      
         .rst_i (rst_i),     
         .pc_in_i(pc_in_i) ,   
-        .pc_out_o(pc_out_o) 
+        .pc_out_o(IF_pc) 
 );
 
 Instr_Memory IM(
@@ -161,19 +175,47 @@ Adder Add_pc(
         .src2_i(pc_out_o),     
         .sum_o(IF_ID_pc_4_i)    
 );
-        
+
+Redo #(.size(32)) PC_redo(
+    .redo(ID_lw_stall),
+    .in(IF_pc),
+    .out(pc_out_o)
+    );
+
 Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
-                IF_ID_pc_4_i,
-                IF_ID_im_i
-                }),
+            IF_ID_pc_4_i,
+            IF_ID_im_i
+            }),
         .data_o({
-                IF_ID_pc_4_o,
-                IF_ID_im_o
-                })
+            IF_ID_pc_4_o_tmp,
+            IF_ID_im_o_tmp
+            })
         );
+
+Redo #(.size(N)) IF_ID_redo(
+    .redo(ID_lw_stall),
+    .in({
+        IF_ID_pc_4_o_tmp,
+        IF_ID_im_o_tmp
+        }),
+    .out({
+        IF_ID_pc_4_o,
+        IF_ID_im_o
+        })
+    );
+
+//Instantiate the components in ID stage 
+Lw_Hazard_Detection lw_hazard(
+    .IF_ID_RS(IF_ID_im_o[25:21]),
+    .IF_ID_RT(IF_ID_im_o[20:16]),
+    .ID_EX_RS(ID_EX_ins_rs_o),
+    .ID_EX_RT(ID_EX_ins_up_o),
+    .ID_EX_memr(ID_EX_mem_read_o),
+    .stall(ID_lw_stall)
+    );
 
 Reg_File RF(
         .clk_i(clk_i),      
@@ -189,22 +231,34 @@ Reg_File RF(
 
 Decoder Control(
         .instr_op_i(IF_ID_im_o[31:26]), 
-        .RegWrite_o(ID_EX_reg_write_i),
-        .ALU_op_o(ID_EX_alu_op_i),   
-        .ALUSrc_o(ID_EX_alu_src_i),   
-        .RegDst_o(ID_EX_reg_dst_i),   
-        .Branch_o(ID_EX_branch_i),
+        .RegWrite_o(ID_EX_reg_write_i_tmp),
+        .ALU_op_o(ID_EX_alu_op_i_tmp),   
+        .ALUSrc_o(ID_EX_alu_src_i_tmp),   
+        .RegDst_o(ID_EX_reg_dst_i_tmp),   
+        .Branch_o(ID_EX_branch_i_tmp),
         .Jump_o(),
-        .MemRead_o(ID_EX_mem_read_i),
-        .MemWrite_o(ID_EX_mem_write_i),
-        .MemtoReg_o(ID_EX_mem_to_reg_i),
+        .MemRead_o(ID_EX_mem_read_i_tmp),
+        .MemWrite_o(ID_EX_mem_write_i_tmp),
+        .MemtoReg_o(ID_EX_mem_to_reg_i_tmp),
         .Jal_o()
         );
 
 Sign_Extend Sign_Extend(
         .data_i(IF_ID_im_o[15:0]),
         .data_o(ID_EX_sign_extend_i)
-        );  
+        );
+
+
+assign ID_EX_mem_to_reg_i = ID_EX_mem_to_reg_i_tmp && !ID_lw_stall;
+assign ID_EX_reg_write_i  = ID_EX_reg_write_i_tmp  && !ID_lw_stall;
+assign ID_EX_mem_read_i   = ID_EX_mem_read_i_tmp   && !ID_lw_stall;
+assign ID_EX_mem_write_i  = ID_EX_mem_write_i_tmp  && !ID_lw_stall;
+assign ID_EX_branch_i     = ID_EX_branch_i_tmp     && !ID_lw_stall;
+assign ID_EX_alu_op_i[0]  = ID_EX_alu_op_i_tmp[0]  && !ID_lw_stall;
+assign ID_EX_alu_op_i[1]  = ID_EX_alu_op_i_tmp[1]  && !ID_lw_stall;
+assign ID_EX_alu_op_i[2]  = ID_EX_alu_op_i_tmp[2]  && !ID_lw_stall;
+assign ID_EX_alu_src_i    = ID_EX_alu_src_i_tmp    && !ID_lw_stall;
+assign ID_EX_reg_dst_i    = ID_EX_reg_dst_i_tmp    && !ID_lw_stall;
 
 Pipe_Reg #(.size(N)) ID_EX(
         .clk_i(clk_i),
