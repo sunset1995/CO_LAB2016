@@ -17,6 +17,7 @@ reg    [size-1:0] last;
 always @(*) begin
     if(redo) begin
         out  <= last;
+        last <= last; 
     end
     else begin
         out  <= in;
