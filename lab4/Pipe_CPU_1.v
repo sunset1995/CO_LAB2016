@@ -64,6 +64,7 @@ wire [31:0] ID_EX_pc_4_i = IF_ID_pc_4_o;
 wire [31:0] ID_EX_read_data_1_i;
 wire [31:0] ID_EX_read_data_2_i;
 wire [31:0] ID_EX_sign_extend_i;
+wire [4:0]  ID_EX_ins_rs_i = IF_ID_im_o[25:21];
 wire [4:0]  ID_EX_ins_up_i = IF_ID_im_o[20:16];
 wire [4:0]  ID_EX_ins_down_i = IF_ID_im_o[15:11];
 wire [5:0]  ID_EX_ins_op_i = IF_ID_im_o[31:26];
@@ -71,6 +72,7 @@ wire [31:0] ID_EX_pc_4_o;
 wire [31:0] ID_EX_read_data_1_o;
 wire [31:0] ID_EX_read_data_2_o;
 wire [31:0] ID_EX_sign_extend_o;
+wire [4:0]  ID_EX_ins_rs_o;
 wire [4:0]  ID_EX_ins_up_o;
 wire [4:0]  ID_EX_ins_down_o;
 wire [5:0]  ID_EX_ins_op_o;
@@ -80,9 +82,13 @@ wire [5:0]  ID_EX_ins_op_o;
 
 /**** EX stage ****/
 
+wire [31:0] EX_rs_data;
+wire [31:0] EX_rt_data;
+wire [ 1:0] EX_rs_pick;
+wire [ 1:0] EX_rt_pick;
 
 wire [ 4:0] EX_MEM_reg_dst_i;
-wire [31:0] EX_MEM_write_data_i = ID_EX_read_data_2_o[31:0];
+wire [31:0] EX_MEM_write_data_i = EX_rt_data[31:0];
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
 wire [31:0] EX_MEM_add_result_i;
@@ -216,6 +222,7 @@ Pipe_Reg #(.size(N)) ID_EX(
                 ID_EX_read_data_1_i,
                 ID_EX_read_data_2_i,
                 ID_EX_sign_extend_i,
+                ID_EX_ins_rs_i,
                 ID_EX_ins_up_i,
                 ID_EX_ins_down_i,
                 ID_EX_ins_op_i
@@ -233,6 +240,7 @@ Pipe_Reg #(.size(N)) ID_EX(
                 ID_EX_read_data_1_o,
                 ID_EX_read_data_2_o,
                 ID_EX_sign_extend_o,
+                ID_EX_ins_rs_o,
                 ID_EX_ins_up_o,
                 ID_EX_ins_down_o,
                 ID_EX_ins_op_o
@@ -255,8 +263,16 @@ ALU_Ctrl ALU_Control(
         .ALUCtrl_o(ALUCtrl_o) 
 );
 
+MUX_3to1 #(.size(32)) Mux_RT(
+    .data0_i(ID_EX_read_data_2_o),
+    .data1_i(EX_MEM_alu_result_o),
+    .data2_i(MEM_write_data_o),
+    .select_i(EX_rt_pick),
+    .data_o(EX_rt_data)
+    );
+
 MUX_2to1 #(.size(32)) Mux1(
-        .data0_i(ID_EX_read_data_2_o),
+        .data0_i(EX_rt_data),
         .data1_i(ID_EX_sign_extend_o),
         .select_i(ID_EX_alu_src_o),
         .data_o(EX_alu_src_2)
@@ -269,12 +285,31 @@ MUX_2to1 #(.size(5)) Mux2(
         .data_o(EX_MEM_reg_dst_i)
         );
 
+MUX_3to1 #(.size(32)) Mux_RS(
+    .data0_i(ID_EX_read_data_1_o),
+    .data1_i(EX_MEM_alu_result_o),
+    .data2_i(MEM_write_data_o),
+    .select_i(EX_rs_pick),
+    .data_o(EX_rs_data)
+    );
+
 MUX_2to1 #(.size(32)) Mux_SRA(
-        .data0_i(ID_EX_read_data_1_o),
+        .data0_i(EX_rs_data),
         .data1_i({27'b0,ID_EX_sign_extend_o[10:6]}),
         .select_i({ID_EX_ins_op_o,ID_EX_sign_extend_o[5:0]}==3),
         .data_o(EX_alu_src_1)
         );
+
+Forwarding forwarding(
+    .RS_addr(ID_EX_ins_rs_o),
+    .RT_addr(ID_EX_ins_up_o),
+    .EX_MEM_wrte(EX_MEM_reg_write_o),
+    .EX_MEM_addr(EX_MEM_reg_dst_o),
+    .MEM_WB_wrte(MEM_WB_reg_write_o),
+    .MEM_WB_addr(MEM_WB_reg_dst_o),
+    .RS_pick(EX_rs_pick),
+    .RT_pick(EX_rt_pick)
+    );
 
 Shift_Left_Two_32 Shifter(
         .data_i(ID_EX_sign_extend_o),
