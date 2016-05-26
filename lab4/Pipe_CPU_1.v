@@ -187,8 +187,8 @@ Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
-            IF_ID_pc_4_i,
-            IF_ID_im_i
+            (MEM_branch_take)? 32'b0 : IF_ID_pc_4_i,
+            (MEM_branch_take)? 32'b0 : IF_ID_im_i
             }),
         .data_o({
             IF_ID_pc_4_o_tmp,
@@ -210,9 +210,9 @@ Redo #(.size(N)) IF_ID_redo(
 
 //Instantiate the components in ID stage 
 Lw_Hazard_Detection lw_hazard(
+    .rst(MEM_branch_take),
     .IF_ID_RS(IF_ID_im_o[25:21]),
     .IF_ID_RT(IF_ID_im_o[20:16]),
-    .ID_EX_RS(ID_EX_ins_rs_o),
     .ID_EX_RT(ID_EX_ins_up_o),
     .ID_EX_memr(ID_EX_mem_read_o),
     .stall(ID_lw_stall)
@@ -409,8 +409,8 @@ Pipe_Reg #(.size(N)) EX_MEM(
 //Instantiate the components in MEM stage
 assign MEM_WB_reg_dst_i    = EX_MEM_reg_dst_o;
 assign MEM_WB_alu_result_i = EX_MEM_alu_result_o;
-assign MEM_WB_mem_to_reg_i = EX_MEM_mem_to_reg_o && !MEM_branch_take;
-assign MEM_WB_reg_write_i  = EX_MEM_reg_write_o && !MEM_branch_take;
+assign MEM_WB_mem_to_reg_i = EX_MEM_mem_to_reg_o;
+assign MEM_WB_reg_write_i  = EX_MEM_reg_write_o;
 Data_Memory DM(
         .clk_i(clk_i),
         .addr_i(EX_MEM_alu_result_o),
