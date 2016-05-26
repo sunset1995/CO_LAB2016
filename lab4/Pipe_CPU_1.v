@@ -106,11 +106,11 @@ wire [31:0] EX_MEM_write_data_i = EX_rt_data[31:0];
 wire [31:0] EX_MEM_alu_result_i;
 wire        EX_MEM_zero_i;
 wire [31:0] EX_MEM_add_result_i;
-wire        EX_MEM_branch_i = ID_EX_branch_o && !MEM_branch_take;
-wire        EX_MEM_mem_write_i = ID_EX_mem_write_o && !MEM_branch_take;
-wire        EX_MEM_mem_read_i = ID_EX_mem_read_o && !MEM_branch_take;
-wire        EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o && !MEM_branch_take;
-wire        EX_MEM_reg_write_i = ID_EX_reg_write_o && !MEM_branch_take;
+wire        EX_MEM_branch_i;
+wire        EX_MEM_mem_write_i;
+wire        EX_MEM_mem_read_i;
+wire        EX_MEM_mem_to_reg_i;
+wire        EX_MEM_reg_write_i;
 wire [31:0] EX_shift_left_2_o;
 
 // MEM stage
@@ -183,7 +183,7 @@ Redo #(.size(32)) PC_redo(
     .out(pc_out_o)
     );
 
-Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
+Pipe_Reg #(.size(64)) IF_ID(       //N is the total length of input/output
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
@@ -196,7 +196,7 @@ Pipe_Reg #(.size(N)) IF_ID(       //N is the total length of input/output
             })
         );
 
-Redo #(.size(N)) IF_ID_redo(
+Redo #(.size(64)) IF_ID_redo(
     .redo(ID_lw_stall),
     .in({
         IF_ID_pc_4_o_tmp,
@@ -261,7 +261,7 @@ assign ID_EX_alu_op_i[2]  = ID_EX_alu_op_i_tmp[2]  && !ID_lw_stall && !MEM_branc
 assign ID_EX_alu_src_i    = ID_EX_alu_src_i_tmp    && !ID_lw_stall && !MEM_branch_take;
 assign ID_EX_reg_dst_i    = ID_EX_reg_dst_i_tmp    && !ID_lw_stall && !MEM_branch_take;
 
-Pipe_Reg #(.size(N)) ID_EX(
+Pipe_Reg #(.size(159)) ID_EX(
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
@@ -377,7 +377,14 @@ Adder Branch_pc(
         .sum_o(EX_MEM_add_result_i)    
         );
 
-Pipe_Reg #(.size(N)) EX_MEM(
+
+assign EX_MEM_branch_i = ID_EX_branch_o && !MEM_branch_take;
+assign EX_MEM_mem_write_i = ID_EX_mem_write_o && !MEM_branch_take;
+assign EX_MEM_mem_read_i = ID_EX_mem_read_o && !MEM_branch_take;
+assign EX_MEM_mem_to_reg_i = ID_EX_mem_to_reg_o && !MEM_branch_take;
+assign EX_MEM_reg_write_i = ID_EX_reg_write_o && !MEM_branch_take;
+
+Pipe_Reg #(.size(107)) EX_MEM(
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
@@ -420,7 +427,7 @@ Data_Memory DM(
         .data_o(MEM_WB_read_data_i)
         );
 
-Pipe_Reg #(.size(N)) MEM_WB(
+Pipe_Reg #(.size(71)) MEM_WB(
         .clk_i(clk_i),
         .rst_i(rst_i),
         .data_i({
