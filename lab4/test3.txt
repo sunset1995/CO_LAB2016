@@ -1,22 +1,22 @@
 addi r1  r0 1          # r1  =  1
 addi r15 r0 -1         # r15 = -1
 addi r8  r0 10         # r8  = 10
-addi r9  r0 4          # r9  =  0
+addi r9  r0 4          # r9  =  4
 mul  r12 r8 r9         # r12 = r8 * r9
 addi r14 r0 8          # r14 =  8
 add  r8  r12 r14       # r8  = r12 + r14
 addi r9  r0 0          # r9  =  0
-lw   r10 4(r8)         # r10 = mem[r8+1]
-lw   r11 0(r8)         # r11 = mem[r8]
+lw   r10 4(r8)         # r10 = mem[r8/4 + 1]
+lw   r11 0(r8)         # r11 = mem[r8/4]
 slt  r2  r10 r11       # r2  = r10 < r11
-beq  r2 r1 3           # if(r2==r1) pc = 15
-sw   r10 0(r8)         # mem[r8]   = r10
-sw   r11 4(r8)         # mem[r8+1] = r11
+beq  r2 r1 3           # if(r2==r1) pc = 16
+sw   r10 0(r8)         # mem[r8/4]   = r10
+sw   r11 4(r8)         # mem[r8/4+1] = r11
 addi r9  r0 1          # r9  =  1
 addi r13 r0 4          # r13 =  4
 add  r8  r8 r13        # r8  = r8 + r13
 slt  r2  r0 r8         # r2  = 0 < r8
-beq  r2 r1 -11         # if(r2==r1) pc = 8
-beq  r8 r0 -12         # if(r8==0)  pc = 8
+beq  r2 r1 -11         # if(r2==r1) pc = 9
+beq  r8 r0 -12         # if(r8==0)  pc = 9
 beq  r9 r0 1           # if(r9==0)  return;
-beq  r9 r9 -17         # pc = 5
+beq  r9 r9 -17         # pc = 6
