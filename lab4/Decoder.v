@@ -1,5 +1,5 @@
 // 0317001_0310511
-//Subject:     CO project 3 - Decoder
+//Subject:     CO project 4 - Decoder
 //--------------------------------------------------------------------------------
 //Version:     1
 //--------------------------------------------------------------------------------
@@ -12,16 +12,16 @@
 
 module Decoder(
     instr_op_i,
-	RegWrite_o,
-	ALU_op_o,
-	ALUSrc_o,
-	RegDst_o,
-	Branch_o,
-	Jump_o,
-	MemRead_o,
-	MemWrite_o,
-	MemtoReg_o,
-	Jal_o
+    RegWrite_o,
+    ALU_op_o,
+    ALUSrc_o,
+    RegDst_o,
+    Branch_o,
+    Jump_o,
+    MemRead_o,
+    MemWrite_o,
+    MemtoReg_o,
+    Jal_o
 );
      
 //I/O ports

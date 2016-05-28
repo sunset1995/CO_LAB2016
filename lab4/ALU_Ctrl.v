@@ -1,5 +1,5 @@
 // 0317001_0310511
-//Subject:     CO project 3 - ALU Controller
+//Subject:     CO project 4 - ALU Controller
 //--------------------------------------------------------------------------------
 //Version:     1
 //--------------------------------------------------------------------------------
@@ -11,9 +11,9 @@
 //--------------------------------------------------------------------------------
 
 module ALU_Ctrl(
-	funct_i,
-	ALUOp_i,
-	ALUCtrl_o
+    funct_i,
+    ALUOp_i,
+    ALUCtrl_o
 );
           
 //I/O ports 
@@ -27,25 +27,25 @@ reg    [4-1:0] ALUCtrl_o;
 
 //Select exact operation
 always @(*) begin
-	if ( ALUOp_i!=0 ) begin
-		ALUCtrl_o[3]   <= (ALUOp_i==1 || ALUOp_i==7);
-		ALUCtrl_o[2:0] <= ALUOp_i[2:0];
-	end
-	else begin
-		case(funct_i)
-			 3: ALUCtrl_o <= 4'b1000;
-			 7: ALUCtrl_o <= 4'b1000;
-			24: ALUCtrl_o <= 4'b0101;
-			32: ALUCtrl_o <= 4'b0010;
-			34: ALUCtrl_o <= 4'b0110;
-			36: ALUCtrl_o <= 4'b0000;
-			37: ALUCtrl_o <= 4'b0001;
-			42: ALUCtrl_o <= 4'b0111;
-			default: begin
-				ALUCtrl_o <= 4'b0000;
-			end
-		endcase
-	end
+    if ( ALUOp_i!=0 ) begin
+        ALUCtrl_o[3]   <= (ALUOp_i==1 || ALUOp_i==7);
+        ALUCtrl_o[2:0] <= ALUOp_i[2:0];
+    end
+    else begin
+        case(funct_i)
+             3: ALUCtrl_o <= 4'b1000;
+             7: ALUCtrl_o <= 4'b1000;
+            24: ALUCtrl_o <= 4'b0101;
+            32: ALUCtrl_o <= 4'b0010;
+            34: ALUCtrl_o <= 4'b0110;
+            36: ALUCtrl_o <= 4'b0000;
+            37: ALUCtrl_o <= 4'b0001;
+            42: ALUCtrl_o <= 4'b0111;
+            default: begin
+                ALUCtrl_o <= 4'b0000;
+            end
+        endcase
+    end
 end
 
 endmodule     
