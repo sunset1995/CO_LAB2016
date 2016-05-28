@@ -39,11 +39,11 @@ wire        [32-1:0] RSdata_o;
 wire        [32-1:0] RTdata_o;
 
 //Read the data
-assign RSdata_o = Reg_File[RSaddr_i];
-assign RTdata_o = Reg_File[RTaddr_i];   
+assign RSdata_o = (RegWrite_i && RDaddr_i==RSaddr_i)? RDdata_i : Reg_File[RSaddr_i];
+assign RTdata_o = (RegWrite_i && RDaddr_i==RTaddr_i)? RDdata_i : Reg_File[RTaddr_i];   
 
 //Writing data when postive edge clk_i and RegWrite_i was set.
-always @(posedge rst_i or posedge clk_i or negedge clk_i) begin
+always @(posedge rst_i or posedge clk_i) begin
     if(rst_i == 0) begin
         Reg_File[0]  <= 0; Reg_File[1]  <= 0; Reg_File[2]  <= 0; Reg_File[3]  <= 0;
         Reg_File[4]  <= 0; Reg_File[5]  <= 0; Reg_File[6]  <= 0; Reg_File[7]  <= 0;
