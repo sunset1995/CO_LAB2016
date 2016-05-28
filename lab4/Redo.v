@@ -11,7 +11,6 @@ input             redo;
 input  [size-1:0] in;
 output [size-1:0] out;
 
-reg    [size-1:0] out;
 reg    [size-1:0] last;
 
 always @(*) begin
