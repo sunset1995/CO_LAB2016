@@ -12,17 +12,14 @@ input  [size-1:0] in;
 output [size-1:0] out;
 
 reg    [size-1:0] last;
-reg    [size-1:0] out;
+
+assign out = (redo)? last : in;
 
 always @(*) begin
-    if(redo) begin
-        out  <= last;
+    if(redo)
         last <= last; 
-    end
-    else begin
-        out  <= in;
+    else
         last <= in;
-    end
 end
 
 endmodule   
