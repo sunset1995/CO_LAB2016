@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
+#define FILENAME "ICACHE.txt"
 using namespace std;
 
 struct cache_content{
@@ -11,26 +12,30 @@ struct cache_content{
 
 const int K = 1024;
 
-double log2(double n) {
+int log2(int n) {
 	// log(n)/log(2) is log2.  
-	return log(n) / log(2.0);  
+	int ret = -1;
+	while( n ) {
+		++ret;
+		n >>= 1;
+	}  
+	return ret;
 }
 
 
 void simulate(int cache_size, int block_size) {
 	unsigned int tag, index, x;
 
-	int offset_bit = (int)log2(block_size);
-	int index_bit  = (int)log2(cache_size/block_size);
+	int offset_bit = log2(block_size);
+	int index_bit  = log2(cache_size/block_size);
 	int line       = (cache_size>>offset_bit);
 
 	vector<cache_content> cache(line);
-	printf("cache line:%d\n", line);
 
 	for(int j=0; j<line; j++)
 		cache[j].v = false;
 	
-	FILE * fp=fopen("ICACHE.txt", "r");
+	FILE * fp=fopen(FILENAME, "r");
 	if( fp==NULL ) {
 		perror("File not found.");
 		return;
@@ -53,10 +58,47 @@ void simulate(int cache_size, int block_size) {
 		}
 	}
 	fclose(fp);
-	printf("miss rate = %d/%d = %f%%\n", miss, total, 100.0*miss/total);
+	printf("%6.2f%%", 100.0*miss/total);
 }
 	
 int main() {
 	// Let us simulate 4KB cache with 16B blocks
-	simulate(64, 32);
+	int startBlockSz = 2;
+	int startCacheSz = 64;
+	int blockSz, cacheSz;
+
+	cacheSz = startCacheSz;
+	puts("line");
+	printf("    ");
+	for(int i=2; i<=32; i*=2)
+		printf("%7d", i);
+	puts("");
+	for(int i=0; i<4; ++i) {
+		printf("%4d", cacheSz);
+		blockSz = startBlockSz;
+		for(int j=0; j<5; ++j) {
+			printf("%7d", cacheSz/blockSz);
+			blockSz *= 2;
+		}
+		cacheSz *= 2;
+		puts("");
+	}
+	puts("");
+
+	cacheSz = startCacheSz;
+	puts("Miss rate");
+	printf("    ");
+	for(int i=2; i<=32; i*=2)
+		printf("%7d", i);
+	puts("");
+	for(int i=0; i<4; ++i) {
+		printf("%4d", cacheSz);
+		blockSz = startBlockSz;
+		for(int j=0; j<5; ++j) {
+			simulate(cacheSz, blockSz);
+			blockSz *= 2;
+		}
+		cacheSz *= 2;
+		puts("");
+	}
 }
