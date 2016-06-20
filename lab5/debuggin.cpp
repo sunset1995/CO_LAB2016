@@ -29,7 +29,7 @@ void simulate(int cache_size, int block_size) {
 	int line       = cache_size/block_size;
 	int index_bit  = log_2(line);
 	int offset_bit = log_2(block_size);
-	int index_mask = ~(1<<index_bit);
+	int index_mask = (1<<index_bit)-1;
 	vector<cache_content> cache(line);
 
 	printf("cache size: %d\n", cache_size);
@@ -59,11 +59,11 @@ void simulate(int cache_size, int block_size) {
 		}
 	}
 	fclose(fp);
-
+	
 	printf("miss rate: %d/%d = %.2f%%\n", (total-hit), total, 100.0*(total-hit)/total);
 }
 	
 int main() {
 	// Let us simulate 4KB cache with 16B blocks
-	simulate(128, 4);
+	simulate(64, 4);
 }
