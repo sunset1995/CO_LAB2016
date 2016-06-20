@@ -2,12 +2,13 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
-#define FILENAME "RADIX.txt"
+#define FILENAME "LU.txt"
 using namespace std;
 
 struct cache_content{
-	bool v;
-	unsigned int  tag;
+	unsigned int timestamp, tag;
+	cache_content()
+	:timestamp(0u), tag(0u) {}
 };
 
 const int K = 1024;
@@ -29,15 +30,10 @@ void simulate(int cache_size, int block_size, int associate) {
 	int offset_bit = log2(block_size);
 	int index_bit  = log2(cache_size/block_size/associate);
 	int line       = (cache_size>>offset_bit) / associate;
+	unsigned int index_mask = line - 1;
 
-	vector<int>           initTimestamp(associate, 0);
-	vector< vector<int> > timestamp(line, initTimestamp);
 	vector<cache_content>           initLine(associate);
 	vector< vector<cache_content> > cache(line, initLine);
-
-	for(int j=0; j<line; j++)
-	for(int k=0; k<associate; ++k)
-		cache[j][k].v = false;
 	
 	FILE * fp=fopen(FILENAME, "r");
 	if( fp==NULL ) {
@@ -48,25 +44,22 @@ void simulate(int cache_size, int block_size, int associate) {
 	unsigned int total=0, miss=0;
 	while(fscanf(fp,"%x",&x)!=EOF) {
 		++total;
-		index = (x>>offset_bit)&(line-1);
-		tag   = x>>(index_bit+offset_bit);
-		bool hit = false;
-		for(int i=0; i<associate; ++i)
-			if(cache[index][i].v && cache[index][i].tag==tag)
-				hit = true;
-		if( hit ) continue;
-		++miss;
+		unsigned nodt = x>>offset_bit;
+		index = nodt & index_mask;
+		tag   = nodt >> index_bit;
+		
 		int lruID = 0;
 		for(int i=0; i<associate; ++i)
-			if(cache[index][i].v==false) {
+			if( cache[index][i].tag==tag ) {
 				lruID = i;
 				break;	
 			}
-			else if(timestamp[index][i] < timestamp[index][lruID])
+			else if( cache[index][i].timestamp < cache[index][lruID].timestamp )
 				lruID = i;
-		cache[index][lruID].v   = true;
-		cache[index][lruID].tag = tag;
-		timestamp[index][lruID] = total;
+		if( cache[index][lruID].tag != tag )
+			++miss;
+		cache[index][lruID].timestamp = total;
+		cache[index][lruID].tag       = tag;
 	}
 	fclose(fp);
 	printf("%6.2f%%", 100.0*miss/total);
