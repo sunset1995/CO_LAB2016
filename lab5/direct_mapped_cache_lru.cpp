@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
-#define FILENAME "LU.txt"
+#define FILENAME "RADIX.txt"
 using namespace std;
 
 struct cache_content{
@@ -23,6 +23,11 @@ int log2(int n) {
 	return ret;
 }
 
+int bitRequired(int cache_size, int block_size, int associate) {
+	int line      = cache_size / block_size / associate;
+	int tagBitNum = 32 - (log2(block_size)+log2(line));
+	return line * associate * (1 + tagBitNum + block_size*8) / K;
+}
 
 void simulate(int cache_size, int block_size, int associate) {
 	unsigned int tag, index, x;
@@ -78,7 +83,7 @@ int main() {
 		printf("%7d", i);
 	puts("");
 	for(int i=0; i<6; ++i) {
-		printf("%5d", cacheSz);
+		printf("%4dK", cacheSz / K);
 		associate = startAssocia;
 		for(int j=0; j<4; ++j) {
 			simulate(cacheSz, 64, associate);
@@ -87,4 +92,23 @@ int main() {
 		cacheSz *= 2;
 		puts("");
 	}
+
+
+	cacheSz = startCacheSz;
+	puts("Bits required");
+	printf("     ");
+	for(int i=1; i<=8; i*=2)
+		printf("%7d", i);
+	puts("");
+	for(int i=0; i<6; ++i) {
+		printf("%4dK", cacheSz / K);
+		associate = startAssocia;
+		for(int j=0; j<4; ++j) {
+			printf("%7d", bitRequired(cacheSz, 64, associate));
+			associate *= 2;
+		}
+		cacheSz *= 2;
+		puts("");
+	}
+	return 0;
 }
