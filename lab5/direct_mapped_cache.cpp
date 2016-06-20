@@ -2,7 +2,7 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
-#define FILENAME "ICACHE.txt"
+#define FILENAME "DCACHE.txt"
 using namespace std;
 
 struct cache_content{
@@ -62,6 +62,7 @@ void simulate(int cache_size, int block_size) {
 }
 	
 int main() {
+	puts(FILENAME);
 	// Let us simulate 4KB cache with 16B blocks
 	int startBlockSz = 2;
 	int startCacheSz = 64;

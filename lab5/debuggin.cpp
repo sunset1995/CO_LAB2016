@@ -65,5 +65,5 @@ void simulate(int cache_size, int block_size) {
 	
 int main() {
 	// Let us simulate 4KB cache with 16B blocks
-	simulate(64, 4);
+	simulate(128, 4);
 }
