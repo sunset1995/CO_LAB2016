@@ -18,7 +18,13 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module pc_instruction( input clk, input hold, input reset, output [19:0] instruction );
+module pc_instruction(
+	input clk,
+	input hold,
+	input reset,
+	output [19:0] instruction
+	);
+
 
 reg [4:0]  pc;
 reg [19:0] data [31:0];
@@ -64,5 +70,6 @@ always @( posedge clk )begin
 		pc <= pc;
 	end
 end
+
 
 endmodule
