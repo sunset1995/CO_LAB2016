@@ -38,7 +38,9 @@ wire [2:0]  alu_output;
 
 // Wire for registers output
 wire [7:0]  data1;
-wire [7:0]  data2;
+wire [7:0]  data2_tmp;
+wire [7:0]  data2         = (selectConst ? instruction[7:0] : data2_tmp);
+
 
 pc_instruction pc_instruction(
 	.clk(clk),
@@ -54,7 +56,7 @@ data_memory data_memory(
 	.writeBack(writeBack),
 	.writeBackData(writeBackData),
 	.out1(data1),
-	.out2(data2),
+	.out2(data2_tmp),
 	.reg1(reg1),
 	.reg2(reg2),
 	.reg3(reg3),
