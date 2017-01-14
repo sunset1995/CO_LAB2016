@@ -32,7 +32,6 @@ wire [19:0] instruction;
 
 // Wire for decoder output
 wire        writeBack;
-wire [7:0]  writeBackData = 8'd15;
 wire        selectConst;
 wire [2:0]  alu_output;
 
@@ -40,6 +39,11 @@ wire [2:0]  alu_output;
 wire [7:0]  data1;
 wire [7:0]  data2_tmp;
 wire [7:0]  data2         = (selectConst ? instruction[7:0] : data2_tmp);
+
+// Wire for alu output
+wire [7:0]  writeBackData;
+wire        overflow;
+wire        zeroflat;
 
 
 pc_instruction pc_instruction(
@@ -68,6 +72,15 @@ decoder decoder(
 	.writeBack(writeBack),
 	.selectConst(selectConst),
 	.alu_op(alu_op)
+	);
+
+alu alu(
+	.alu_op(alu_op),
+	.data1(data1),
+	.data2(data2),
+	.ans(writeBackData),
+	.overflow(overflow),
+	.zeroflag(zeroflag)
 	);
 
 
