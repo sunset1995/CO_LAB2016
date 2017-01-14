@@ -29,8 +29,14 @@ module final_project(
 
 
 wire [19:0] instruction;
-wire        writeBack = 1'b1;
+
+// Wire for decoder output
+wire        writeBack;
 wire [7:0]  writeBackData = 8'd15;
+wire        selectConst;
+wire [2:0]  alu_output;
+
+// Wire for registers output
 wire [7:0]  data1;
 wire [7:0]  data2;
 
@@ -53,6 +59,13 @@ data_memory data_memory(
 	.reg2(reg2),
 	.reg3(reg3),
 	.reg4(reg4)
+	);
+
+decoder decoder(
+	.opcode(instruction[19:16]),
+	.writeBack(writeBack),
+	.selectConst(selectConst),
+	.alu_op(alu_op)
 	);
 
 
