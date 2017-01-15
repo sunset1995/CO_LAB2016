@@ -46,8 +46,8 @@ assign ans = (alu_op[2] ?
 assign overflow = (alu_op[1] ? sub_overflow : add_overflow);
 assign zeroflag = ~(ans[0] | ans[1] | ans[2] | ans[3] | ans[4] | ans[5] | ans[6] | ans[7]);
 
-full_adder gate_add(.in1(data1), .in2(data2), .cIn(1'b0), .sum(result_add), .c(add_c), .overflow(add_overflow));
-full_adder gete_sub(.in1(data1), .in2(result_not), cIn(1'b1), .sum(result_sub), .c(sub_c). overflow(sub_overflow));
+adder_8bits gate_add(.in1(data1), .in2(data2), .cIn(1'b0), .sum(result_add), .c(add_c), .overflow(add_overflow));
+adder_8bits gete_sub(.in1(data1), .in2(result_not), .cIn(1'b1), .sum(result_sub), .c(sub_c), .overflow(sub_overflow));
 
 
 endmodule
