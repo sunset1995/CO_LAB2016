@@ -54,7 +54,7 @@ always @( posedge clk ) begin
 		register[select1[1:0]] <= writeBackData;
 	end
 	else begin
-		register[select1[1:0]] <= register[select1];
+		register[select1[1:0]] <= register[select1[1:0]];
 	end
 end
 
