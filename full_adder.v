@@ -27,4 +27,8 @@ module full_adder(
 	);
 
 
+assign s    = (a ^ b ^ cIn);
+assign cOut = ((a&b) | (a&cIn) | (b&cIn));
+
+
 endmodule
