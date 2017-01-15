@@ -24,7 +24,9 @@ module final_project(
 	output signed [7:0] reg1,
 	output signed [7:0] reg2,
 	output signed [7:0] reg3,
-	output signed [7:0] reg4
+	output signed [7:0] reg4,
+	output              zeroflag,
+	output              overflow
 	);
 
 
@@ -43,7 +45,7 @@ wire [7:0]  data2         = (selectConst ? instruction[7:0] : data2_tmp);
 // Wire for alu output
 wire [7:0]  writeBackData;
 wire        overflow;
-wire        zeroflat;
+wire        zeroflag;
 
 
 pc_instruction pc_instruction(
