@@ -34,7 +34,7 @@ wire [7:0] result_and = (data1 & data2);
 wire [7:0] result_or  = (data1 | data2);
 wire [7:0] result_xor = (data1 ^ data2);
 wire [7:0] result_not = (~data1);
-wire [7:0] ans = (alu_op[2] ?
+assign     ans = (alu_op[2] ?
 					(alu_op[1] ?
 						(alu_op[0] ? result_and : result_or)
 						: (alu_op[0] ? result_xor : result_not))
