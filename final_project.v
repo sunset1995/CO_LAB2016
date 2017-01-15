@@ -33,7 +33,7 @@ wire [19:0] instruction;
 // Wire for decoder output
 wire        writeBack;
 wire        selectConst;
-wire [2:0]  alu_output;
+wire [2:0]  alu_op;
 
 // Wire for registers output
 wire [7:0]  data1;

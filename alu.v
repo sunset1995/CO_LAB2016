@@ -28,8 +28,8 @@ module alu(
 	);
 
 
-wire [7:0] result_add = (signed(data1) + signed(data2));
-wire [7:0] result_sub = (signed(data1) - signed(data2));
+wire [7:0] result_add = (data1 + data2);
+wire [7:0] result_sub = (data1 - data2);
 wire [7:0] result_and = (data1 & data2);
 wire [7:0] result_or  = (data1 | data2);
 wire [7:0] result_xor = (data1 ^ data2);
