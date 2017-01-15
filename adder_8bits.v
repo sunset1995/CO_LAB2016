@@ -23,12 +23,14 @@ module adder_8bits(
 	input  [7:0] in2,
 	input        cIn,
 	output [7:0] sum,
-	output       c
+	output       c,
+	output       overflow
 	);
 
 
 wire [7:0] carry;
-assign     c = carry[7];
+assign c = carry[7];
+assign overflow = (carry[6] ^ carry[7]);
 
 full_adder fa1(.a(in1[0]), .b(in2[0]), .cIn(cIn), .s(sum[0]), .cOut(carry[0]));
 full_adder fa2(.a(in1[1]), .b(in2[1]), .cIn(carry[0]), .s(sum[1]), .cOut(carry[1]));

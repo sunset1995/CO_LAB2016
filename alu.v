@@ -34,18 +34,20 @@ wire [7:0] result_and = (data1 & data2);
 wire [7:0] result_or  = (data1 | data2);
 wire [7:0] result_xor = (data1 ^ data2);
 wire [7:0] result_not = (~data1);
-wire       add_c;
-wire       sub_c;
+wire       add_overflow, add_c;
+wire       sub_overflow, sub_c;
 
-assign     ans = (alu_op[2] ?
-					(alu_op[1] ?
-						(alu_op[0] ? result_and : result_or)
-						: (alu_op[0] ? result_xor : result_not))
-					: (alu_op[1] ? result_sub : result_add)
-					);
+assign ans = (alu_op[2] ?
+				(alu_op[1] ?
+					(alu_op[0] ? result_and : result_or)
+					: (alu_op[0] ? result_xor : result_not))
+				: (alu_op[1] ? result_sub : result_add)
+				);
+assign overflow = (alu_op[1] ? sub_overflow : add_overflow);
+assign zeroflag = ~(ans[0] | ans[1] | ans[2] | ans[3] | ans[4] | ans[5] | ans[6] | ans[7]);
 
-full_adder gate_add(.in1(data1), .in2(data2), .cIn(1'b0), .sum(result_add), .c(add_c));
-full_adder gete_sub(.in1(data1), .in2(result_not), cIn(1'b1), .sum(result_sub), .c(sub_c));
+full_adder gate_add(.in1(data1), .in2(data2), .cIn(1'b0), .sum(result_add), .c(add_c), .overflow(add_overflow));
+full_adder gete_sub(.in1(data1), .in2(result_not), cIn(1'b1), .sum(result_sub), .c(sub_c). overflow(sub_overflow));
 
 
 endmodule
