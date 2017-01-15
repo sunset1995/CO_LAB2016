@@ -28,7 +28,7 @@ module decoder(
 
 assign writeBack   = (opcode    != 4'b0000);
 assign selectConst = (opcode[0] == 1'b1);
-assign alu_op      = opcode[3:1];
+assign alu_op[2:0] = opcode[3:1];
 
 
 endmodule
